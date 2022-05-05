@@ -23,7 +23,7 @@
 
 	<modules>
 		<module>common</module>
-		<module>euaclient</module>
+		<module>EUA_Client</module>
 	</modules>
 
 </project>
