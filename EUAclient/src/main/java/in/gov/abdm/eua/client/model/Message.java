@@ -1,15 +1,8 @@
 package in.gov.abdm.eua.client.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import in.gov.abdm.eua.client.dto.EuaRequestBody;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(schema = "eua")

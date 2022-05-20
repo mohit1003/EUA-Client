@@ -48,7 +48,7 @@ public class RabbitMQConf {
     public RabbitTemplate template(ConnectionFactory connectionFactory) {
         final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(converter());
-        rabbitTemplate.containerAckMode(AcknowledgeMode.MANUAL);
+//        rabbitTemplate.containerAckMode(AcknowledgeMode.MANUAL);
         return rabbitTemplate;
     }
 }

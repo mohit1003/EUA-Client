@@ -5,12 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import in.gov.abdm.eua.client.constants.ConstantsUtils;
-import in.gov.abdm.eua.client.dto.AckResponse;
-import in.gov.abdm.eua.client.dto.EuaRequestBody;
-import in.gov.abdm.eua.client.dto.EuaRequestBodyStatus;
-import in.gov.abdm.eua.client.dto.MessageTO;
-import in.gov.abdm.eua.client.service.EuaService;
-import in.gov.abdm.eua.client.service.MQConsumerService;
+import in.gov.abdm.eua.client.dto.dhp.AckResponse;
+import in.gov.abdm.eua.client.dto.dhp.EuaRequestBody;
+import in.gov.abdm.eua.client.dto.dhp.EuaRequestBodyStatus;
+import in.gov.abdm.eua.client.dto.dhp.MessageTO;
+import in.gov.abdm.eua.client.service.impl.EuaServiceImpl;
+import in.gov.abdm.eua.client.service.impl.MQConsumerServiceImpl;
 import in.gov.abdm.uhi.common.dto.FulfillmentTO;
 import in.gov.abdm.uhi.common.dto.ProviderTO;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +36,7 @@ public class EuaController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EuaController.class);
 	public static final String NACK_RESPONSE = "{ \"message\": { \"ack\": { \"status\": \"NACK\" } }, \"error\": { \"type\": \"\", \"code\": \"500\", \"path\": \"string\", \"message\": \"Something went wrong\" } }";
-	private final MQConsumerService mqService;
+	private final MQConsumerServiceImpl mqService;
 
 	@Value("${abdm.gateway.url}")
 	private String abdmGatewayURl;
@@ -47,17 +47,17 @@ public class EuaController {
 	@Value("${abdm.eua.url}")
 	private String abdmEUAURl;
 
-	private final EuaService euaService;
+	private final EuaServiceImpl euaService;
 	private final RabbitTemplate template;
 
-	public EuaController(WebClient webClient, RabbitTemplate template, MQConsumerService mqConsumerService, EuaService euaService) {
+	public EuaController(WebClient webClient, RabbitTemplate template, MQConsumerServiceImpl mqConsumerServiceImpl, EuaServiceImpl euaService) {
 		this.template = template;
 
 
 		LOGGER.info("ABDM Gateway :: " + abdmGatewayURl);
 
 		LOGGER.info("ABDM Registry :: " + abdmRegistryURl);
-		this.mqService = mqConsumerService;
+		this.mqService = mqConsumerServiceImpl;
 
 		this.euaService = euaService;
 	}
@@ -70,26 +70,10 @@ public class EuaController {
 
 		ObjectWriter ow = new ObjectMapper().writer();
 		ObjectMapper objectMapper = new ObjectMapper();
-
-		ResponseEntity<AckResponse> onSearchAck = checkIfMessageIsNull(onSearchRequest, objectMapper);
-		if (onSearchAck != null) return onSearchAck;
-
-		ResponseEntity<AckResponse> onSearchAck1 = checkIfContextIsNull(onSearchRequest, objectMapper);
-		if (onSearchAck1 != null) return onSearchAck1;
-
-
-		ResponseEntity<AckResponse> onSearchAck2 = checkIfMandatoryfieldsInContextAreNull(onSearchRequest, objectMapper);
-		if (onSearchAck2 != null) return onSearchAck2;
-
-		List<ProviderTO> providers = onSearchRequest.getMessage().getCatalog().getProviders();
-		List<FulfillmentTO> fulfillments = providers.stream().flatMap(provider -> provider.getFulfillments().stream()).collect(Collectors.toList());
-
-		List<FulfillmentTO> fulfillmentPersonWithNoNameList = fulfillments.stream().filter(f -> null == f.getPerson().getName()).collect(Collectors.toList());
-
-		ResponseEntity<AckResponse> onSearchAck3 = checkIfPersonNameIsNull(objectMapper, fulfillmentPersonWithNoNameList);
-		if (onSearchAck3 != null) return onSearchAck3;
-
 		try {
+			ResponseEntity<AckResponse> onSearchAck = getResponseEntityForErrorCases(onSearchRequest, objectMapper, "on_search");
+			if (onSearchAck != null) return onSearchAck;
+
 			String onRequestString = ow.writeValueAsString(onSearchRequest);
 			String requestMessageId = onSearchRequest.getContext().getMessageId();
 
@@ -106,6 +90,30 @@ public class EuaController {
 			return returnNotKnownError(objectMapper);
 
 		}
+	}
+
+	private ResponseEntity<AckResponse> getResponseEntityForErrorCases(EuaRequestBody onSearchRequest, ObjectMapper objectMapper, String action) throws JsonProcessingException {
+		ResponseEntity<AckResponse> onSearchAck = checkIfMessageIsNull(onSearchRequest, objectMapper);
+		if (onSearchAck != null) return onSearchAck;
+
+		ResponseEntity<AckResponse> onSearchAck1 = checkIfContextIsNull(onSearchRequest, objectMapper);
+		if (onSearchAck1 != null) return onSearchAck1;
+
+
+		ResponseEntity<AckResponse> onSearchAck2 = checkIfMandatoryfieldsInContextAreNull(onSearchRequest, objectMapper);
+		if (onSearchAck2 != null) return onSearchAck2;
+
+		if(action.equalsIgnoreCase("on_search")) {
+			List<ProviderTO> providers = onSearchRequest.getMessage().getCatalog().getProviders();
+			List<FulfillmentTO> fulfillments = providers.stream().flatMap(provider -> provider.getFulfillments().stream()).collect(Collectors.toList());
+
+			List<FulfillmentTO> fulfillmentPersonWithNoNameList = fulfillments.stream().filter(f -> null == f.getPerson().getName()).collect(Collectors.toList());
+
+			ResponseEntity<AckResponse> onSearchAck3 = checkIfPersonNameIsNull(objectMapper, fulfillmentPersonWithNoNameList);
+			if (onSearchAck3 != null) return onSearchAck3;
+			return null;
+		}
+		return null;
 	}
 
 	private ResponseEntity<AckResponse> returnNotKnownError(ObjectMapper objectMapper) throws JsonProcessingException {
@@ -285,17 +293,25 @@ public class EuaController {
 	}
 
 	@PostMapping(ConstantsUtils.SEARCH_ENDPOINT)
-	public void search(@RequestBody EuaRequestBody searchRequest) throws JsonProcessingException {
+	public ResponseEntity<AckResponse> search(@RequestBody EuaRequestBody searchRequest) throws JsonProcessingException {
 
 		LOGGER.info("Inside Search API ");
 		String url;
 		ObjectWriter ow = new ObjectMapper().writer();
 		ObjectMapper objectMapper = new ObjectMapper();
 
+		ResponseEntity<AckResponse> searchAck = getResponseEntityForErrorCases(searchRequest, objectMapper, "search");
+		if (searchAck != null)
+			return searchAck;
+		else
+			searchAck = ResponseEntity.status(HttpStatus.OK).build();
+
 		searchRequest.getContext().setConsumerUri(abdmEUAURl);
 		String onRequestString = ow.writeValueAsString(searchRequest);
 		String requestMessageId = searchRequest.getContext().getMessageId();
 		String clientId = searchRequest.getContext().getConsumerId();
+
+
 
 		try {
 			LOGGER.info("Gateway URI :: " + abdmGatewayURl);
@@ -313,6 +329,7 @@ public class EuaController {
 			mqService.sendNackResponse(onSearchAckJsonErrorString, requestMessageId);
 		}
 
+		return searchAck;
 	}
 
 

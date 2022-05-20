@@ -1,12 +1,12 @@
 package in.gov.abdm.uhi.common.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+//import com.fasterxml.jackson.annotation.JsonInclude;
+//import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * ACK or NACK of message received
  */
-@JsonInclude(Include.NON_NULL)
+//@JsonInclude(Include.NON_NULL)
 public class AcknowledementTO {
 
 	private MessageTO message;

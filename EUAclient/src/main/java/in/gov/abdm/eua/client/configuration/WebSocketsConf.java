@@ -1,7 +1,6 @@
 package in.gov.abdm.eua.client.configuration;
 
 import in.gov.abdm.eua.client.constants.ConstantsUtils;
-import in.gov.abdm.eua.client.service.UserInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

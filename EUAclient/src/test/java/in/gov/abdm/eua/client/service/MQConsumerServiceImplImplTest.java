@@ -1,58 +1,56 @@
-package in.gov.abdm.eua.client.controller;
+package in.gov.abdm.eua.client.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import in.gov.abdm.eua.client.dto.dhp.AckResponse;
 import in.gov.abdm.eua.client.dto.dhp.EuaRequestBody;
-import in.gov.abdm.eua.client.service.impl.EuaServiceImpl;
+import in.gov.abdm.eua.client.dto.dhp.MessageTO;
 import in.gov.abdm.eua.client.service.impl.MQConsumerServiceImpl;
-import org.assertj.core.api.Assertions;
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.context.annotation.Description;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.mockito.*;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
+import java.io.IOException;
 
-public class EuaControllerTest {
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
+
+public class MQConsumerServiceImplImplTest {
+
+    @Mock
+    ObjectMapper objectMapper;
+    @Mock
+    SimpMessagingTemplate messagingTemplate;
     @Mock
     WebClient webClient;
-
     @Mock
-    RabbitTemplate rabbitTemplate;
-
+    WebClient.RequestBodyUriSpec requestBodyUriSpec;
     @Mock
-    MQConsumerServiceImpl mqConsumerServiceImpl;
-
+    WebClient.RequestHeadersSpec requestHeadersSpec;
     @Mock
-    EuaServiceImpl euaServiceImpl;
-
+    WebClient.RequestBodySpec requestBodySpec;
+    @Mock
+    WebClient.ResponseSpec responseSpec;
+    @Mock
+    SimpUserRegistry simpUserRegistry;
     @InjectMocks
-    EuaController euaController;
+    MQConsumerServiceImpl mqConsumerServiceImpl;
 
     EuaRequestBody requestBody;
 
-    AckResponse ackResponse;
-
-    ObjectMapper objectMapper;
-
     @BeforeEach
-    public void setUp() throws JsonProcessingException {
-        objectMapper = new ObjectMapper();
-        MockitoAnnotations.openMocks(this);
-        requestBody = objectMapper.readValue("{\n" +
+    public void setupUp() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        requestBody = requestBody = objectMapper.readValue("{\n" +
                 "  \"context\": {\n" +
                 "    \"domain\": \"nic2004:mumm\",\n" +
                 "    \"country\": \"IND\",\n" +
                 "    \"city\": \"std:080\",\n" +
                 "    \"provider_uri\": \"http://localhost:9090\",\n" +
-                "    \"consumer_uri\": \"http://localhost:9090\",\n" +
-                "    \"transaction_id\": \"svdsdvsdv\",\n" +
                 "    \"action\": \"search\",\n" +
                 "    \"consumer_id\":\"1221\",\n" +
                 "    \"core_version\": \"0.7.1\",\n" +
@@ -215,95 +213,49 @@ public class EuaControllerTest {
                 "    }\n" +
                 "  }\n" +
                 "}", EuaRequestBody.class);
-        String nack = "{ \"message\": { \"ack\": { \"status\": \"NACK\" } }, \"error\": { \"type\": \"\", \"code\": \"500\", \"path\": \"string\", \"message\": \"Something went wrong\" } }";
-        ackResponse = objectMapper.readValue(nack, AckResponse.class);
-    }
 
-    @Test
-    public void contextLoads() {
-        Assertions.assertThat(euaController).isNotNull();
-    }
-
-    @Test
-    @Description("To test context value should not be null for on search method call")
-    public void givenResponseForOnSearchContextShouldNotBeNull() throws JsonProcessingException {
-        requestBody.setContext(null);
-        ackResponse.getError().setMessage("Context is Null");
-        ResponseEntity<AckResponse> ackResponseResponseEntity = new ResponseEntity<>(ackResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-        Assertions.assertThat(euaController.onSearch(requestBody)).isEqualTo(ackResponseResponseEntity);
+        MockitoAnnotations.openMocks(this);
+        mqConsumerServiceImpl = Mockito.mock(MQConsumerServiceImpl.class);
 
     }
 
     @Test
-    @Description("To test message value should not be null for on search method call")
-    public void givenResponseForOnSearchMessageShouldNotBeNull() throws JsonProcessingException {
-        requestBody.setMessage(null);
-        ackResponse.getError().setMessage("Message is Null");
-        ResponseEntity<AckResponse> ackResponseResponseEntity = new ResponseEntity<>(ackResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-        Assertions.assertThat(euaController.onSearch(requestBody)).isEqualTo(ackResponseResponseEntity);
+    void getAckResponseResponseEntity() {
+        WebClient restClient = WebClient.create();
+
+        when(webClient.post()).thenReturn(requestBodyUriSpec);
+        when(requestBodyUriSpec.uri(anyString())).thenReturn(requestBodySpec);
+        when(requestBodySpec.header(any(),any())).thenReturn(requestBodySpec);
+
+        when(requestHeadersSpec.header(any(),any())).thenReturn(requestHeadersSpec);
+
+        when(requestBodySpec.accept(any())).thenReturn(requestBodySpec);
+        when(requestBodySpec.body(any())).thenReturn(requestHeadersSpec);
+        when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+        when(responseSpec.bodyToMono(ArgumentMatchers.<Class<String>>notNull()))
+                .thenReturn(Mono.just("resp"));
+
+        Assert.assertNotNull(restClient.post());
+
+//        Mockito.verify(mqConsumerService).getAckResponseResponseEntity(requestBody, null, 1 );
+    }
+
+    @Test
+    void sendNackResponse() {
+        mqConsumerServiceImpl.sendNackResponse("","");
+        Mockito.verify(mqConsumerServiceImpl).sendNackResponse("", "");
 
     }
 
     @Test
-    @Description("To test all mandatory fields are present in the context")
-    public void givenResponseForOnSearchAllMandatoryFieldsForContextPresent() throws JsonProcessingException {
-        makeContextMandatoryFieldsNull();
-
-        ackResponse.getError().setMessage("Mandatory fields on context are Null");
-        ResponseEntity<AckResponse> ackResponseResponseEntity = new ResponseEntity<>(ackResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-        Assertions.assertThat(euaController.onSearch(requestBody)).isEqualTo(ackResponseResponseEntity);
-    }
-
-    private void makeContextMandatoryFieldsNull() {
-        requestBody.getContext().setConsumerUri(null);
-        requestBody.getContext().setConsumerId(null);
-        requestBody.getContext().setAction(null);
-        requestBody.getContext().setCity(null);
-        requestBody.getContext().setCountry(null);
-        requestBody.getContext().setDomain(null);
-        requestBody.getContext().setTimestamp(null);
-        requestBody.getContext().setTransactionId(null);
-        requestBody.getContext().setCoreVersion(null);
-        requestBody.getContext().setMessageId(null);
+    void euaToGatewayConsumer() throws IOException {
+        mqConsumerServiceImpl.euaToGatewayConsumer(new MessageTO(), null,1L);
+        Mockito.verify(mqConsumerServiceImpl).euaToGatewayConsumer(any(), any(),anyLong());
     }
 
     @Test
-    @Description("To test that person name is not null")
-    public void givenResponseForOnSearchPersonNameShouldNotBeNull() throws JsonProcessingException {
-        requestBody.getMessage().getCatalog().getProviders().get(0).getFulfillments().get(0).getPerson().setName(null);
-        requestBody.getMessage().getCatalog().getProviders().add(requestBody.getMessage().getCatalog().getProviders().get(0));
-        ackResponse.getError().setMessage("Mandatory field person name in one of the result is null");
-        ResponseEntity<AckResponse> ackResponseResponseEntity = new ResponseEntity<>(ackResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-        Assertions.assertThat(euaController.onSearch(requestBody)).isEqualTo(ackResponseResponseEntity);
+    void gatewayToEuaConsumer() {
+        mqConsumerServiceImpl.gatewayToEuaConsumer(new MessageTO());
+        Mockito.verify(mqConsumerServiceImpl).gatewayToEuaConsumer(any());
     }
-
-    @Test
-    @Description("To test that when called search context should not be null")
-    public void givenRequestForSearchContextShouldNotBeNull() throws JsonProcessingException {
-        requestBody.setContext(null);
-        ackResponse.getError().setMessage("Context is Null");
-        ResponseEntity<AckResponse> ackResponseResponseEntity = new ResponseEntity<>(ackResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-        Assertions.assertThat(euaController.search(requestBody)).isEqualTo(ackResponseResponseEntity);
-    }
-
-    @Test
-    @Description("To test that when called search context should not be null")
-    public void givenRequestForSearchMessageShouldNotBeNull() throws JsonProcessingException {
-        requestBody.setMessage(null);
-        ackResponse.getError().setMessage("Message is Null");
-        ResponseEntity<AckResponse> ackResponseResponseEntity = new ResponseEntity<>(ackResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-        Assertions.assertThat(euaController.search(requestBody)).isEqualTo(ackResponseResponseEntity);
-    }
-
-    @Test
-    @Description("To test all mandatory fields are present in the context for search")
-    public void givenResponseForSearchAllMandatoryFieldsForContextPresent() throws JsonProcessingException {
-        makeContextMandatoryFieldsNull();
-
-        ackResponse.getError().setMessage("Mandatory fields on context are Null");
-        ResponseEntity<AckResponse> ackResponseResponseEntity = new ResponseEntity<>(ackResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-        Assertions.assertThat(euaController.search(requestBody)).isEqualTo(ackResponseResponseEntity);
-    }
-
-
 }
