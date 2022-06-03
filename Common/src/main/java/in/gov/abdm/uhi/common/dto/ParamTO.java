@@ -20,6 +20,10 @@ public class ParamTO {
 
 	private String currency;
 
+	private String mode;
+
+	private String vpa;
+
 	@JsonProperty(value = "additionalProperties")
 	private String additionalProperties;
 }

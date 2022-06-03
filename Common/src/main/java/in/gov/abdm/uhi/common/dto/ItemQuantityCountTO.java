@@ -12,7 +12,9 @@ import lombok.Data;
 @JsonInclude(Include.NON_NULL)
 public class ItemQuantityCountTO {
 
-	private Integer count;
+	private String count;
 
 	private ScalarTO measure;
+
+	private String available;
 }

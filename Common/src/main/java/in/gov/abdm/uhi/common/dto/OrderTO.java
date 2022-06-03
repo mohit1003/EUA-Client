@@ -19,9 +19,11 @@ public class OrderTO {
 
 	private String state;
 
-	private String provider;
+	private ProviderTO provider;
 
 	private List<OrderItemsTO> items;
+
+	private OrderItemsTO item;
 
 	private BillingTO billing;
 
@@ -30,6 +32,8 @@ public class OrderTO {
 	private QuotationTO quote;
 
 	private PaymentTO payment;
+
+	private AgentTO customer;
 
 	@JsonProperty(value = "created_at")
 	private String createdAt;

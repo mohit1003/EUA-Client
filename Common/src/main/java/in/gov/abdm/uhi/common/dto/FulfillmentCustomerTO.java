@@ -15,4 +15,6 @@ public class FulfillmentCustomerTO {
 	private PersonTO person;
 
 	private ContactTO contact;
+
+	private String id;
 }

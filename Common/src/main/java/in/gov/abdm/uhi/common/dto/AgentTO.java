@@ -6,6 +6,7 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 
 /**
@@ -31,5 +32,5 @@ public class AgentTO {
 
 	private String email;
 
-	private Map<String, String> tags;
+	private JsonNode tags;
 }

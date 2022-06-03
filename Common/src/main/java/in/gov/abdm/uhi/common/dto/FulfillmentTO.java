@@ -2,6 +2,7 @@ package in.gov.abdm.uhi.common.dto;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -30,6 +31,8 @@ public class FulfillmentTO {
 	private FulfillmentCustomerTO customer;
 
 	private AgentTO person;
+
+	private AgentTO agent;
 
 	private ContactTO contact;
 

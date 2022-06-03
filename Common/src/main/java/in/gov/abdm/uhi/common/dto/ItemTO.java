@@ -38,5 +38,7 @@ public class ItemTO {
 
 	private Boolean recommended;
 
+	private ItemQuantityTO quantity;
+
 	private Map<String, String> tags;
 }

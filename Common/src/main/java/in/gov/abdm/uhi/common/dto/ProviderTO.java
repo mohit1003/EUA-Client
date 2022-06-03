@@ -3,6 +3,7 @@ package in.gov.abdm.uhi.common.dto;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -23,6 +24,8 @@ public class ProviderTO {
 
 	private DescriptorTO descriptor;
 
+	private Set<Location> locations;
+
 	@JsonProperty(value = "category_id")
 	private String categoryId;
 
@@ -41,6 +44,10 @@ public class ProviderTO {
 	private List<ItemTO> items;
 
 	private String exp;
+
+	private BillingTO billing;
+
+	private AgentTO customer;
 
 	private Map<String, String> tags;
 }

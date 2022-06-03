@@ -31,6 +31,9 @@ public class AddressTO {
 
 	private String country;
 
+	@JsonProperty("full")
+	private String fullAddress;
+
 	@JsonProperty(value = "area_code")
 	private String areaCode;
 }

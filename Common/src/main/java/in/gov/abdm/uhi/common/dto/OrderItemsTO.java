@@ -14,5 +14,9 @@ public class OrderItemsTO {
 
 	private String id;
 
+	private DescriptorTO descriptor;
+	private String fulfillment_id;
+	private PriceTO price;
+
 	private ItemQuantityTO quantity;
 }
