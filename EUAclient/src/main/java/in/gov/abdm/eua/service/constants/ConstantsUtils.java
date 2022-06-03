@@ -32,5 +32,10 @@ public class ConstantsUtils {
     public static final Object HEALTH_ID_NO_PATTERN = "^[0-9]{2}-*[0-9]{4}-*[0-9]{4}-*[0-9]{4}$";
 
     public static final String NACK_RESPONSE = "{ \"message\": { \"ack\": { \"status\": \"NACK\" } }, \"error\": { \"type\": \"\", \"code\": \"500\", \"path\": \"string\", \"message\": \"Something went wrong\" } }";
+    public static final String ACK_RESPONSE = "{ \"message\": { \"ack\": { \"status\": \"ACK\" } }, \"error\": { \"type\": \"\", \"code\": \"\", \"path\": \"\", \"message\": \"\" } }";
 
+    public static final String QUEUE_SPECIFIC_USER = "/queue/specific-user";
+    public static final String BOOKING_SERVICE_URL = "http://100.65.158.41:3030/api/v1/bookingService";
+    public static final String GATEWAY_URL = "http://100.65.158.41:8090/api/v1";
+    public static final String EUA_URL = "http://100.65.158.41:8901/api/v1/euaService";
 }

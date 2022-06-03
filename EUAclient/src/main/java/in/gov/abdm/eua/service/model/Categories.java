@@ -6,7 +6,6 @@ import javax.persistence.*;
 @Table(schema = "eua")
 public class Categories {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "category_id")
     private Long categoryId;
 
@@ -14,5 +13,5 @@ public class Categories {
 
     @OneToOne
     @JoinColumn(name = "order_id", referencedColumnName = "order_id")
-    private  Orders orders;
+    private Orders orders;
 }

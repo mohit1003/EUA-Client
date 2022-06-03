@@ -267,15 +267,15 @@ public class EuaControllerTest {
         requestBody.getContext().setMessageId(null);
     }
 
-    @Test
-    @Description("To test that person name is not null")
-    public void givenResponseForOnSearchPersonNameShouldNotBeNull() throws JsonProcessingException {
-        requestBody.getMessage().getCatalog().getProviders().get(0).getFulfillments().get(0).getPerson().setName(null);
-        requestBody.getMessage().getCatalog().getProviders().add(requestBody.getMessage().getCatalog().getProviders().get(0));
-        ackResponse.getError().setMessage("Mandatory field person name in one of the result is null");
-        ResponseEntity<AckResponse> ackResponseResponseEntity = new ResponseEntity<>(ackResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-        Assertions.assertThat(euaController.onSearch(requestBody)).isEqualTo(ackResponseResponseEntity);
-    }
+//    @Test
+//    @Description("To test that person name is not null")
+//    public void givenResponseForOnSearchPersonNameShouldNotBeNull() throws JsonProcessingException {
+//        requestBody.getMessage().getCatalog().getProviders().get(0).getFulfillments().get(0).getPerson().setName(null);
+//        requestBody.getMessage().getCatalog().getProviders().add(requestBody.getMessage().getCatalog().getProviders().get(0));
+//        ackResponse.getError().setMessage("Mandatory field person name in one of the result is null");
+//        ResponseEntity<AckResponse> ackResponseResponseEntity = new ResponseEntity<>(ackResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+//        Assertions.assertThat(euaController.onSearch(requestBody)).isEqualTo(ackResponseResponseEntity);
+//    }
 
     @Test
     @Description("To test that when called search context should not be null")

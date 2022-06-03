@@ -15,7 +15,7 @@ function setConnected(connected) {
 const destination = '/user/queue/specific-user';
 
 function connect() {
-    var socket = new SockJS('/eua-client');
+    var socket = new SockJS('/test');
     stompClient = Stomp.over(socket);
     var messageid = $("#messageId").val()
     stompClient.connect({ name:messageid}, function (frame) {

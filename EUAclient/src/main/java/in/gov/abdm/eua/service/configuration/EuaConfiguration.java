@@ -18,6 +18,7 @@ import javax.net.ssl.SSLException;
 
 @Configuration
 //@EnableWebFlux
+
 public class EuaConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(EuaConfiguration.class);
     @Bean

@@ -1,15 +1,16 @@
 package in.gov.abdm.eua.service.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import in.gov.abdm.eua.service.constants.ConstantsUtils;
 import in.gov.abdm.eua.service.dto.dhp.AckResponse;
 import in.gov.abdm.eua.service.dto.dhp.EuaRequestBody;
 import in.gov.abdm.eua.service.dto.dhp.MessageTO;
-import in.gov.abdm.eua.service.model.Message;
 import in.gov.abdm.eua.service.repository.EuaRepository;
 import in.gov.abdm.eua.service.service.EuaService;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +20,9 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 @Service
+@Slf4j
 public class EuaServiceImpl implements EuaService {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(EuaServiceImpl.class);
     private final RabbitTemplate template;
     private final EuaRepository euaRepository;
     private final ObjectMapper objectMapper;
@@ -35,20 +37,17 @@ public class EuaServiceImpl implements EuaService {
     }
 
     @Override
-    public void pushToMqGatewayTOEua(MessageTO message) throws JsonProcessingException {
+    public void pushToMqGatewayTOEua(MessageTO message, String requestMessageId) {
+        LOGGER.info("Pushing to MQ. Message ID is "+ requestMessageId);
+        LOGGER.info("Inside GATEWAY_TO_EUA queue convertAndSend... Queue name is =====> "+ConstantsUtils.ROUTING_KEY_GATEWAY_TO_EUA);
         template.convertAndSend(ConstantsUtils.EXCHANGE, ConstantsUtils.ROUTING_KEY_GATEWAY_TO_EUA, message);
 
-//        Message messageModel = modelMapper.map(message, Message.class);
-//        return euaRepository.save(messageModel);
 
     }
 
     @Override
-    public void pushToMq(String abdmGatewayURl, String searchEndpoint, EuaRequestBody searchRequest, String requestString, String requestMessageId, String clientId) {
-        String url;
-        url = abdmGatewayURl + searchEndpoint;
-        searchRequest.getContext().setProviderUri(url);
-
+    public void pushToMq(EuaRequestBody searchRequest, String requestString, String requestMessageId, String clientId) {
+        LOGGER.info("Pushing to MQ. Message ID is "+ requestMessageId);
         MessageTO message = extractMessage(requestMessageId, clientId, requestString,searchRequest.getContext().getAction());
         template.convertAndSend(ConstantsUtils.EXCHANGE, ConstantsUtils.ROUTING_KEY_EUA_TO_GATEWAY, message);
     }
@@ -67,33 +66,15 @@ public class EuaServiceImpl implements EuaService {
 
 
     @Override
-    public ResponseEntity<AckResponse> getOnAckResponseResponseEntity(ObjectMapper objectMapper, String onRequest, String dhpQueryType) throws com.fasterxml.jackson.core.JsonProcessingException {
+    public ResponseEntity<AckResponse> getOnAckResponseResponseEntity(ObjectMapper objectMapper, String onRequest, String dhpQueryType, String requestMessageId) throws com.fasterxml.jackson.core.JsonProcessingException {
         if (onRequest == null) {
-
-            String onSearchAckJsonErrorString = "{ \"message\": { \"ack\": { \"status\": \"NACK\" } }, \"error\": { \"type\": \"\", \"code\": \"400\", \"path\": \"string\", \"message\": \"Message ID not present\" } }";
+            LOGGER.error("ERROR. Request is null"+ requestMessageId);
+            LOGGER.error("Error with response. Response is "+onRequest);
             AckResponse onSearchAck = objectMapper.readValue(NACK_RESPONSE, AckResponse.class);
-            return new ResponseEntity<>(onSearchAck, HttpStatus.OK);
+            return new ResponseEntity<>(onSearchAck, HttpStatus.INTERNAL_SERVER_ERROR);
 
         } else {
-//			EuaRequestBody euaRequestBody;
-//			EuaRequestBodyStatus euaRequestBodyStatus;
-//			if(dhpQueryType.equals("on_init") || dhpQueryType.equals("on_confirm") || dhpQueryType.equals("on_status")) {
-//				euaRequestBodyStatus = objectMapper.readValue(onRequest, EuaRequestBodyStatus.class);
-//				messageRepository.save(new Message(euaRequestBodyStatus.getContext().getMessage_id(), onRequest, dhpQueryType,Timestamp.from(ZonedDateTime.now().toInstant()),euaRequestBodyStatus.getContext().getConsumer_id()));
-//
-//			}
-//			if(dhpQueryType.equals("on_search") || dhpQueryType.equals("on_select")) {
-//				euaRequestBody = objectMapper.readValue(onRequest, EuaRequestBody.class);
-//				messageRepository.save(new Message(euaRequestBody.getContext().getMessage_id(), onRequest, dhpQueryType, Timestamp.from(ZonedDateTime.now().toInstant()),euaRequestBody.getContext().getConsumer_id()));
-//
-//			}
-
-//			Optional<Message> message = messageData.get(messageData.size()-1);
-//			if(Optional.ofNullable(message).isPresent()) {
-//				Message messageFromDb = message.get();
-//				messageFromDb.setResponse(onRequestString);
-
-//			}
+            LOGGER.info("Success... Message ID is"+ requestMessageId);
             String onRequestAckJsonString = "{ \"message\": { \"ack\": { \"status\": \"ACK\" } } }";
             AckResponse onSearchAck = objectMapper.readValue(onRequestAckJsonString, AckResponse.class);
             return new ResponseEntity<>(onSearchAck, HttpStatus.OK);
