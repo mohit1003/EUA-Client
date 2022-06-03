@@ -1,17 +1,20 @@
 package in.gov.abdm.uhi.EUABookingService.beans;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import lombok.Data;
+import java.util.Map;
 
 import javax.validation.constraints.NotNull;
-import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import lombok.Data;
 
 /**
  * Intent of a user. Used for searching for services
  */
 @Data
-@JsonInclude(Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown=true)
 @NotNull
 public class IntentTO {
 	

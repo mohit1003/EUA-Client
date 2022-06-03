@@ -9,9 +9,8 @@ import javax.persistence.*;
 @Data
 public class Payments {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "transaction_id")
-    private Long transactionId;
+    private String transactionId;
     private String method;
     private String currency;
     @Column( name = "transaction_time_stamp")
