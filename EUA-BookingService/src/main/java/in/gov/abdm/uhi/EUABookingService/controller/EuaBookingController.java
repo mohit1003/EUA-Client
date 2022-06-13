@@ -1,18 +1,30 @@
 package in.gov.abdm.uhi.EUABookingService.controller;
 
-import in.gov.abdm.uhi.EUABookingService.Entity.Categories;
-import in.gov.abdm.uhi.EUABookingService.Entity.Orders;
-import in.gov.abdm.uhi.EUABookingService.Service.SaveDataDB;
-import in.gov.abdm.uhi.EUABookingService.beans.EuaRequest;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import java.util.List;
+import in.gov.abdm.uhi.EUABookingService.Entity.Categories;
+import in.gov.abdm.uhi.EUABookingService.Entity.Orders;
+import in.gov.abdm.uhi.EUABookingService.Service.SaveDataDB;
+import in.gov.abdm.uhi.EUABookingService.beans.AckResponse;
+import in.gov.abdm.uhi.EUABookingService.beans.AckTO;
+import in.gov.abdm.uhi.EUABookingService.beans.AcknowledementTO;
+import in.gov.abdm.uhi.EUABookingService.beans.ErrorTO;
+import in.gov.abdm.uhi.EUABookingService.beans.EuaRequest;
+import in.gov.abdm.uhi.EUABookingService.beans.MessageTO;
 @RestController
 @RequestMapping(value = "/api/v1/bookingService")
 public class EuaBookingController {
@@ -21,18 +33,63 @@ public class EuaBookingController {
 	@Autowired
 	SaveDataDB savedatadb;
 
+
 	@PostMapping(path = "/on_init")
-	public ResponseEntity<String> savedata(@RequestBody @Valid EuaRequest request){
-		LOGGER.info("Received request"+request);
-		
-		Orders saveDataInDb = savedatadb.saveDataInDb(request);
-		if(saveDataInDb!=null)
+	public ResponseEntity<AcknowledementTO> savedataForInit(@RequestBody @Valid EuaRequest request){
+		LOGGER.info(request.getContext().getMessageId()+"Received request inside on_init "+request);
+		AckResponse onSaveAck=new AckResponse() ;
+		Orders saveDataInDb = savedatadb.saveDataInDb(request,"on_init");
+		if(saveDataInDb!=null && null!=request.getContext().getProviderUri())
 		{
-			return new ResponseEntity<String>("true",HttpStatus.OK);	
+			if(request.getContext().getProviderUri().isBlank())
+			{
+				ErrorTO e=new ErrorTO();
+				e.setMessage("Provider url is blank");
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(createNacknowledgementTO(e));
+			}
+				
+			return ResponseEntity.status(HttpStatus.OK).body(createAcknowledgementTO());			
 		}
-		else		
-		return new ResponseEntity<String>("false",HttpStatus.INTERNAL_SERVER_ERROR);	
+		else
+		{
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(createNacknowledgementTO(null));		 
+		}
+		 
 	}
+	@PostMapping(path = "/on_confirm")
+	public ResponseEntity<AcknowledementTO> savedataForConfirm(@RequestBody @Valid EuaRequest request){
+		LOGGER.info(request.getContext().getMessageId()+"Received request inside on_confirm "+request);
+		AckResponse onSaveAck=new AckResponse() ;
+		Orders saveDataInDb = savedatadb.saveDataInDb(request,"on_confirm");
+		if(saveDataInDb!=null  && null!=request.getContext().getProviderUri())
+		{
+			if(request.getContext().getProviderUri().isBlank())
+			{
+				ErrorTO e=new ErrorTO();
+				e.setMessage("Provider url is blank");
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(createNacknowledgementTO(e));
+			}
+			return ResponseEntity.status(HttpStatus.OK).body(createAcknowledgementTO());			
+		}
+		else
+		{
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(createNacknowledgementTO(null));		 
+		}
+		 
+	}
+	private AcknowledementTO createAcknowledgementTO() {
+		AckTO ack = new AckTO("ACK");
+		MessageTO ackMessage = new MessageTO(ack);
+		return new AcknowledementTO(ackMessage, null);
+		}
+	
+	private AcknowledementTO createNacknowledgementTO(ErrorTO error) {
+		AckTO ack = new AckTO("NACK");
+		MessageTO ackMessage = new MessageTO(ack);
+		return new AcknowledementTO(ackMessage, error);
+		}
+	
+	
 	
 	@GetMapping(path = "/getOrders")
 	public ResponseEntity<List<Orders>> getOrders(){	

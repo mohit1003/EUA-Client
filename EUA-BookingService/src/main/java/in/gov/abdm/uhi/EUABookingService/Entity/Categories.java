@@ -8,8 +8,7 @@ import javax.persistence.*;
 @Table(schema = "eua")
 @Data
 public class Categories {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+	@Id
     @Column(name = "category_id")
     private Long categoryId;
 

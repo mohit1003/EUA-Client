@@ -26,6 +26,8 @@ public class Orders {
     private String healthcareProviderName;
     @Column(name = "healthcare_provider_id")
     private String healthcareProviderId;
+    @Column(name = "healthcare_provider_url")
+    private String healthcareProviderUrl;
     @Column(name = "healthcare_service_provider_email")
     private String healthcareServiceProviderEmail;
     @Column(name = "healthcare_service_provider_phone")
@@ -58,6 +60,10 @@ public class Orders {
     private String isServiceFulfilled;
     @Column(name = "healthcare_professional_department")
     private String healthcareProfessionalDepartment;
+    @Column(name = "Message",length = 50000)
+    private String message;
+    @Column(name = "slot_id")
+    private String slotId;
 
     @ManyToOne
     @JoinColumn(name = "user_id",  referencedColumnName ="user_id")
