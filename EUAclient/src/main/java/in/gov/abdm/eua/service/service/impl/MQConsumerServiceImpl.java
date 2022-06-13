@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -29,7 +30,8 @@ import java.io.IOException;
 public class MQConsumerServiceImpl implements MQConsumerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MQConsumerServiceImpl.class);
 
-    private final String abdmGatewayUrl;
+    @Value("${abdm.gateway.url}")
+    private String abdmGatewayUrl;
 
     final
     ObjectMapper objectMapper;
@@ -45,7 +47,7 @@ public class MQConsumerServiceImpl implements MQConsumerService {
         this.webClient = webClient;
         this.simpUserRegistry = simpUserRegistry;
 
-        abdmGatewayUrl = ConstantsUtils.GATEWAY_URL;
+//        abdmGatewayUrl = ConstantsUtils.GATEWAY_URL;
         LOGGER.info("abdmGatewayUrl is "+abdmGatewayUrl);
     }
 
@@ -60,6 +62,7 @@ public class MQConsumerServiceImpl implements MQConsumerService {
         LOGGER.info("Message ID is "+ request.getContext().getMessageId());
 
         Mono<AckResponse> ackResponseMono = this.webClient.post().uri(url)
+                .header("authorization","UHI")
                 .body(BodyInserters.fromValue(request))
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError,
@@ -74,10 +77,8 @@ public class MQConsumerServiceImpl implements MQConsumerService {
         ackResponseMono.subscribe(res -> {
             LOGGER.info("Inside subscribe :: URL is :: "+ finalUrl);
             LOGGER.info("Response from webclient call is ====> "+res);
-            messagingTemplate.convertAndSendToUser(request.getContext().getMessageId(),ConstantsUtils.QUEUE_SPECIFIC_USER, res);
+            messagingTemplate.convertAndSendToUser(request.getContext().getMessageId(), ConstantsUtils.QUEUE_SPECIFIC_USER, res);
         });
-
-
 
         return ackResponseMono;
     }

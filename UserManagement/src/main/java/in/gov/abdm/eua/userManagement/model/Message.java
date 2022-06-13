@@ -1,18 +1,16 @@
 package in.gov.abdm.eua.userManagement.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.persistence.*;
 
 @Entity
-@Table(schema = "eua", name = "message")
-@Getter
-@Setter
+@Table(schema = "eua")
+@Data
 public class Message {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(nullable = false, columnDefinition = "text")

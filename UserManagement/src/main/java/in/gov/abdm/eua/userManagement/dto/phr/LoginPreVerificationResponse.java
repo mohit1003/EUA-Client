@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package in.gov.abdm.eua.userManagement.dto.phr;
 
@@ -21,12 +21,12 @@ import java.util.Set;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LoginPreVerificationResponse extends ServiceResponse {
-	
-	private Object transactionId;
-	
-	private String mobileEmail;
-	
-	private Set<String> mappedPhrAddress;
-	
+
+    private Object transactionId;
+
+    private String mobileEmail;
+
+    private Set<String> mappedPhrAddress;
+
 
 }

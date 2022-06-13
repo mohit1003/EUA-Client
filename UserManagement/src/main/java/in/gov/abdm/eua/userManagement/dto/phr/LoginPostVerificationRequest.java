@@ -6,7 +6,6 @@ import javax.validation.constraints.NotNull;
 
 /**
  * @author mohit-lti
- *
  */
 
 @Data
@@ -15,10 +14,10 @@ import javax.validation.constraints.NotNull;
 @ToString
 @Builder
 public class LoginPostVerificationRequest {
-	@NotNull(message = "transactionId cannot be null")
-	private Object transactionId;
-	@NotNull(message = "patientId cannot be null")
-	private Object patientId;
-	@NotNull(message = "requesterId cannot be null")
-	private Object requesterId;
+    @NotNull(message = "transactionId cannot be null")
+    private Object transactionId;
+    @NotNull(message = "patientId cannot be null")
+    private Object patientId;
+    @NotNull(message = "requesterId cannot be null")
+    private Object requesterId;
 }

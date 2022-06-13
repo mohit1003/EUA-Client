@@ -17,8 +17,8 @@ import java.util.Set;
 public class TransactionWithPHRResponse extends ServiceResponse {
 
 
-	private Object sessionId;
-	
-	private Set<String> mappedPhrAddress;
+    private Object sessionId;
+
+    private Set<String> mappedPhrAddress;
 
 }

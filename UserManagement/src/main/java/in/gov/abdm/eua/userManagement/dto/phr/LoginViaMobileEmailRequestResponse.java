@@ -14,14 +14,13 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class LoginViaMobileEmailRequestResponse extends ServiceResponse{
+public class LoginViaMobileEmailRequestResponse extends ServiceResponse {
     @NotNull(message = "TransactionId cannot be null")
     private Object transactionId;
     @NotNull(message = "TransactionId cannot be null")
     private String requesterId;
     @NotBlank(message = "TransactionId cannot be null")
     private String authMode;
-    @NotNull(message = "TransactionId cannot be null")
-    private String error;
+
 
 }

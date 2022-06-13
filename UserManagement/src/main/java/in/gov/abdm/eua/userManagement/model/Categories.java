@@ -1,12 +1,14 @@
 package in.gov.abdm.eua.userManagement.model;
 
+import lombok.Data;
+
 import javax.persistence.*;
 
 @Entity
-@Table(schema = "eua", name = "categories")
+@Table(schema = "eua")
+@Data
 public class Categories {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "category_id")
     private Long categoryId;
 
@@ -14,5 +16,5 @@ public class Categories {
 
     @OneToOne
     @JoinColumn(name = "order_id", referencedColumnName = "order_id")
-    private  Orders orders;
+    private Orders orders;
 }

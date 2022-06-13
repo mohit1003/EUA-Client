@@ -1,6 +1,6 @@
 /*
  * Patient Health Record Service
- * Create your PHR ID to track your health records in one place. 
+ * Create your PHR ID to track your health records in one place.
  *
  *  *
  *
@@ -18,15 +18,15 @@ import javax.validation.constraints.NotNull;
  */
 
 public class CreatePHRRequest {
-  private Boolean alreadyExistedPHR;
+    private Boolean alreadyExistedPHR;
 
-  private Object password;
+    private Object password;
 
-  @NotNull(message = "PhrAddress cannot be null")
-  private Object phrAddress;
+    @NotNull(message = "PhrAddress cannot be null")
+    private Object phrAddress;
 
-  @NotNull(message = "sessionId cannot be null")
-  private Object sessionId;
+    @NotNull(message = "sessionId cannot be null")
+    private Object sessionId;
 
 
 }

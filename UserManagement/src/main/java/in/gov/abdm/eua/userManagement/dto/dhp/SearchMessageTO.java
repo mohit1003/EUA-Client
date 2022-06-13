@@ -18,13 +18,13 @@ import javax.validation.constraints.NotNull;
 @JsonInclude(Include.NON_NULL)
 @NotNull
 public class SearchMessageTO {
-	
-	@Valid
-	private IntentTO intent;
-	@JsonProperty(value = "order_id")
-	private String orderId;
 
-	private OrderTO order;
-	@Valid
-	private CatalogTO catalog;
+    @Valid
+    private IntentTO intent;
+    @JsonProperty(value = "order_id")
+    private String orderId;
+
+    private OrderTO order;
+    @Valid
+    private CatalogTO catalog;
 }

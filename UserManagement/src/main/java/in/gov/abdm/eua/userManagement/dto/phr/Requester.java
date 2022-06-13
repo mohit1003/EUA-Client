@@ -11,9 +11,9 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
- public class Requester {
-	@NotBlank(message = "Requester type cannot be null/blank")
-	private String type;
-	@NotBlank(message = "Requester ID cannot be null/blank")
-	private String id;
+public class Requester {
+    @NotBlank(message = "Requester type cannot be null/blank")
+    private String type;
+    @NotBlank(message = "Requester ID cannot be null/blank")
+    private String id;
 }

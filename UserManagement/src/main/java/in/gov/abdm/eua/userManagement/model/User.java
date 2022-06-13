@@ -1,15 +1,13 @@
 package in.gov.abdm.eua.userManagement.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(schema = "eua", name = "user")
-@Getter
-@Setter
+@Table(schema = "eua")
+@Data
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -76,10 +74,10 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<Payments> payments;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private UserRefreshToken userRefreshTokens;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<UserRefreshToken> userRefreshTokens;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<UserAbhaAddress> user_abhaAddresses;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)

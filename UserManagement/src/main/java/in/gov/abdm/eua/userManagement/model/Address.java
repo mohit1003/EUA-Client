@@ -1,14 +1,12 @@
 package in.gov.abdm.eua.userManagement.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.persistence.*;
 
 @Entity
-@Table(schema = "eua", name = "address")
-@Getter
-@Setter
+@Table(schema = "eua")
+@Data
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

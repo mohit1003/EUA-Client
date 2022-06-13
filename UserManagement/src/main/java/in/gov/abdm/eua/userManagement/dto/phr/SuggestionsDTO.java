@@ -14,6 +14,6 @@ import java.util.Set;
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 
-public class SuggestionsDTO extends  ServiceResponse {
+public class SuggestionsDTO extends ServiceResponse {
     Set<String> suggestedPhrAddress;
 }

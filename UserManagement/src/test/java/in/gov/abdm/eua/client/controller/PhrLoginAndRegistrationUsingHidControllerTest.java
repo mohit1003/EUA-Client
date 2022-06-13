@@ -49,8 +49,8 @@ public class PhrLoginAndRegistrationUsingHidControllerTest {
     public void whenGivenNullRequestForFindUserByHealthId_shouldGive400BadReq() {
         Mono<SearchResponsePayLoad> responsePayLoad = Mono.just(new SearchResponsePayLoad());
         responsePayLoad.subscribe(res -> {
-            res.setError("Request cannot be null");
-            res.setCode("400");
+            res.getError().setErrorString("Request cannot be null");
+            res.getError().setCode("400");
         });
 
         final ResponseEntity<Mono<SearchResponsePayLoad>> errorResponse = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responsePayLoad);
@@ -73,14 +73,15 @@ public class PhrLoginAndRegistrationUsingHidControllerTest {
                         .content(request))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
+
     //TC for /reg/hid/confirmInit ends
     //TC for /registration/hid/auth-init begins
     @Test
     @Description("To test that method should give 400 bad request when request body is null")
     public void whenGivenNullRequestForGenerateTransactionOtp_shouldGive400BadReq() {
         SearchResponsePayLoad responsePayLoad = new SearchResponsePayLoad();
-        responsePayLoad.setError("Request cannot be null");
-        responsePayLoad.setCode("400");
+        responsePayLoad.getError().setErrorString("Request cannot be null");
+        responsePayLoad.getError().setCode("400");
         final ResponseEntity<SearchResponsePayLoad> errorResponse = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responsePayLoad);
         Assertions.assertThat(controller.findUserByHealthId(null, null)).isNotNull();
     }
@@ -278,12 +279,12 @@ public class PhrLoginAndRegistrationUsingHidControllerTest {
         Mono<HidResponse> hidResponse;
         hidResponse = Mono.just(new HidResponse());
         hidResponse.subscribe(res -> {
-            res.setError("Request cannot be null");
-            res.setCode("400");
+            res.getError().setErrorString("Request cannot be null");
+            res.getError().setCode("400");
         });
 
         ResponseEntity<Mono<HidResponse>> errorBody = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(hidResponse);
-        Assertions.assertThat(controller.verifyUserOtp(null,null).toString()).isEqualTo(errorBody.toString());
+        Assertions.assertThat(controller.verifyUserOtp(null, null).toString()).isEqualTo(errorBody.toString());
     }
 
 
@@ -349,14 +350,14 @@ public class PhrLoginAndRegistrationUsingHidControllerTest {
     @Test
     @Description("To test that given null Request should return 400 bad request")
     public void givenNullRequestForCreatePhr_ShouldReturn400Error() throws Exception {
-        Mono<JwtResponseHid> response= Mono.just(new JwtResponseHid());
+        Mono<JwtResponseHid> response = Mono.just(new JwtResponseHid());
         response.subscribe(res -> {
-            res.setError("Request cannot be null");
-            res.setCode("400");
+            res.getError().setErrorString("Request cannot be null");
+            res.getError().setCode("400");
         });
 
         ResponseEntity<Mono<JwtResponseHid>> errorBody = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        Assertions.assertThat(controller.createPhrAddress(null,null, null).toString()).isEqualTo(errorBody.toString());
+        Assertions.assertThat(controller.createPhrAddress(null, null, null).toString()).isEqualTo(errorBody.toString());
     }
 
 //    @Test
@@ -381,7 +382,6 @@ public class PhrLoginAndRegistrationUsingHidControllerTest {
 //                .andExpect(MockMvcResultMatchers.content()
 //                        .contentType(MediaType.APPLICATION_JSON));
 //    }
-
 
 
     @Test
@@ -447,20 +447,20 @@ public class PhrLoginAndRegistrationUsingHidControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
-// TC for /registration/hid/create/phrAddress ends
+    // TC for /registration/hid/create/phrAddress ends
 // TC for /login/hid/auth-init begins
-@Test
-@Description("To test when provided null request for login hid auth init should give bad request")
-public void givenNullRequestForHidLoginAuthInit_ShouldGiveBadReq() {
-    Mono<LoginViaMobileEmailRequestResponse> response = Mono.just(new LoginViaMobileEmailRequestResponse());
-    response.subscribe(res ->{
-        res.setError("Request cannot be null");
-        res.setCode("400");
-    });
+    @Test
+    @Description("To test when provided null request for login hid auth init should give bad request")
+    public void givenNullRequestForHidLoginAuthInit_ShouldGiveBadReq() {
+        Mono<LoginViaMobileEmailRequestResponse> response = Mono.just(new LoginViaMobileEmailRequestResponse());
+        response.subscribe(res -> {
+            res.getError().setErrorString("Request cannot be null");
+            res.getError().setCode("400");
+        });
 
-    ResponseEntity<Mono<LoginViaMobileEmailRequestResponse>> errorBody = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-    Assertions.assertThat(controller.generateOtpForHidLogin(null,null, null).toString()).isEqualTo(errorBody.toString());
-}
+        ResponseEntity<Mono<LoginViaMobileEmailRequestResponse>> errorBody = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        Assertions.assertThat(controller.generateOtpForHidLogin(null, null, null).toString()).isEqualTo(errorBody.toString());
+    }
 
     @Test
     @Description("To test that given null all mandatory parameters for login hid auth init should return 400 bad request")
@@ -630,15 +630,15 @@ public void givenNullRequestForHidLoginAuthInit_ShouldGiveBadReq() {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
-// TC for /login/hid/auth-init ends
+    // TC for /login/hid/auth-init ends
 //TC for/login/hid/search/auth-mode begins
     @Test
     @Description("To test given null request for login hid search authMode should give bad request")
     public void givenNullRequestForLoginSearchAuthMode_SHouldGiveBadReq() {
         Mono<SearchResponsePayLoad> response = Mono.just(new SearchResponsePayLoad());
         response.subscribe(res -> {
-            res.setError("Request cannot be null");
-            res.setCode("400");
+            res.getError().setErrorString("Request cannot be null");
+            res.getError().setCode("400");
         });
 
         Assertions.assertThat(controller.searchUserByHealthIdForLogin(null, null).toString()).isEqualTo(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response).toString());
@@ -723,11 +723,11 @@ public void givenNullRequestForHidLoginAuthInit_ShouldGiveBadReq() {
     @Description("To test given null request for login phraddress authInit should return 400 bad req")
     public void givenNullRequestForLoginPhrAuthInit_ShouldReturnBadReq() {
         Mono<AuthInitResponse> response = Mono.just(new AuthInitResponse());
-        response.subscribe(res->{
-            res.setError("Request cannot be null");
-            res.setCode("400");
+        response.subscribe(res -> {
+            res.getError().setErrorString("Request cannot be null");
+            res.getError().setCode("400");
         });
-        Assertions.assertThat(controller.generateOtpPhrLogin(null,null, null).toString()).isEqualTo(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response).toString());
+        Assertions.assertThat(controller.generateOtpPhrLogin(null, null, null).toString()).isEqualTo(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response).toString());
     }
 
     @Test
@@ -900,11 +900,11 @@ public void givenNullRequestForHidLoginAuthInit_ShouldGiveBadReq() {
     public void givenNullRequestForLoginPhrAuthConfirm_ShouldReturnBadReq() {
         Mono<AuthConfirmResponse> response = Mono.just(new AuthConfirmResponse());
         response.subscribe(res -> {
-            res.setError("Request cannot be null");
-            res.setCode("400");
+            res.getError().setErrorString("Request cannot be null");
+            res.getError().setCode("400");
         });
 
-        Assertions.assertThat(controller.verifyOtpPhrLogin(null,null, null).toString()).isEqualTo(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response).toString());
+        Assertions.assertThat(controller.verifyOtpPhrLogin(null, null, null).toString()).isEqualTo(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response).toString());
     }
 
     @Test
@@ -982,7 +982,8 @@ public void givenNullRequestForHidLoginAuthInit_ShouldGiveBadReq() {
                         .content(request))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
-//TC for/login/hid/search/auth-confirm ends
+
+    //TC for/login/hid/search/auth-confirm ends
 //TC /login/phrAddress/search/auth-mode begins
     @Test
     @Description("To test that given null for mandatory request param phrAddress for login phrAddress search authMode should return 400 bad request")
@@ -1008,7 +1009,6 @@ public void givenNullRequestForHidLoginAuthInit_ShouldGiveBadReq() {
 
 
 //TC /login/phrAddress/search/auth-mode ends
-
 
 
     @AfterEach

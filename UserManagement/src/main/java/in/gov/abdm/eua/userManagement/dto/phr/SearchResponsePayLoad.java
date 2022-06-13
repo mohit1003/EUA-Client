@@ -13,13 +13,12 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SearchResponsePayLoad extends ServiceResponse{
-	
-	private String healthIdNumber;
-	private Set<String> authMethods;
-	private Set<String> blockedAuthMethods;
-	private String status;
-	
-	
+public class SearchResponsePayLoad extends ServiceResponse {
+
+    private String healthIdNumber;
+    private Set<String> authMethods;
+    private Set<String> blockedAuthMethods;
+    private String status;
+
 
 }

@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class ResendLoginOTPRequest {
-	private String txnId;
+    private String txnId;
 
-	private String authMethod;
+    private String authMethod;
 
 
 }

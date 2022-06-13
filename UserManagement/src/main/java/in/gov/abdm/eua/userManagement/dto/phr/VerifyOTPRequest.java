@@ -6,9 +6,9 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
-public class VerifyOTPRequest{
+public class VerifyOTPRequest {
 
-	private Object sessionId;
-	private Object value;
+    private Object sessionId;
+    private Object value;
 
 }

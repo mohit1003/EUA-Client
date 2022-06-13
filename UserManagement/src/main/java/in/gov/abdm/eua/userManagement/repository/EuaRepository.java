@@ -10,5 +10,5 @@ public interface EuaRepository extends JpaRepository<Message, Long> {
 
     List<Optional<Message>> findByMessageIdAndDhpQueryType(String messageId, String DhpQueryType);
 
-     List<Optional<Message>> findByMessageId(String messageId);
+    List<Optional<Message>> findByMessageId(String messageId);
 }

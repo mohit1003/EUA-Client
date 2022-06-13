@@ -10,20 +10,20 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class CreatePHRRequest {
-	@NotNull(message = "SessionId is mandatory")
-	private Object sessionId;
-	@NotNull(message = "phrAddress is mandatory")
-	private Object phrAddress;
+    @NotNull(message = "SessionId is mandatory")
+    private Object sessionId;
+    @NotNull(message = "phrAddress is mandatory")
+    private Object phrAddress;
 
-//	@Encryption(required = false)
+    //	@Encryption(required = false)
 //	@Password(required = false)
-	private Object password;
-	
-	private Boolean isAlreadyExistedPHR;
+    private Object password;
 
-	@NotBlank(message = "healthIdNumber cannot be empty")
-	private String healthIdNumber;
-	@NotBlank(message = "authMethod cannot be empty")
-	private String authMethod;
+    private Boolean isAlreadyExistedPHR;
+
+    @NotBlank(message = "healthIdNumber cannot be empty")
+    private String healthIdNumber;
+    @NotBlank(message = "authMethod cannot be empty")
+    private String authMethod;
 
 }

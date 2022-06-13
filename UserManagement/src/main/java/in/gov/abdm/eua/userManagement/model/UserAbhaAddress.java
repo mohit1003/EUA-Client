@@ -1,14 +1,12 @@
 package in.gov.abdm.eua.userManagement.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.persistence.*;
 
 @Entity
-@Table(schema = "eua", name = "user_abha_address")
-@Getter
-@Setter
+@Table(schema = "eua")
+@Data
 public class UserAbhaAddress {
     @Column(name = "user_abha_address_id")
     @Id
@@ -18,7 +16,7 @@ public class UserAbhaAddress {
     private String phrAddress;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName ="user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
 
 

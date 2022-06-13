@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TransactionResponse extends ServiceResponse {
-	@NotNull(message = "sessionId cannot be null")
-	private Object sessionId;
+    @NotNull(message = "sessionId cannot be null")
+    private Object sessionId;
 
 }

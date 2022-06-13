@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class ResendOTPRequest {
 
-	@NotNull(message = "sessionId Cannot be null")
-	private Object sessionId;
+    @NotNull(message = "sessionId Cannot be null")
+    private Object sessionId;
 
 }

@@ -1,15 +1,21 @@
 package in.gov.abdm.eua.userManagement.model;
 
+import lombok.Data;
+
 import javax.persistence.*;
 
 @Entity
-@Table(schema = "eua", name = "orders")
+@Table(schema = "eua")
+@Data
 public class Orders {
     @Id
     @Column(name = "order_id")
-    private Long orderId;
+    private String orderId;
+
     @Column(name = "category_id")
-    private Integer categoryId;
+    private String categoryId;
+
+
     @Column(name = "order_date")
     private String orderDate;
     @Column(name = "healthcare_service_name")
@@ -20,6 +26,8 @@ public class Orders {
     private String healthcareProviderName;
     @Column(name = "healthcare_provider_id")
     private String healthcareProviderId;
+    @Column(name = "healthcare_provider_url")
+    private String healthcareProviderUrl;
     @Column(name = "healthcare_service_provider_email")
     private String healthcareServiceProviderEmail;
     @Column(name = "healthcare_service_provider_phone")
@@ -52,20 +60,17 @@ public class Orders {
     private String isServiceFulfilled;
     @Column(name = "healthcare_professional_department")
     private String healthcareProfessionalDepartment;
+    @Column(name = "Message",length = 50000)
+    private String message;
 
     @ManyToOne
     @JoinColumn(name = "user_id",  referencedColumnName ="user_id")
     private User user;
+    @Column(name = "healthIdNumber")
+    private String abhaId;
 
-    @OneToOne
-    private Payments payments;
 
     @OneToOne
     @JoinColumn(name = "transaction_id", referencedColumnName ="transaction_id")
     private Payments payment;
-
-    @OneToOne
-    private Payments payment121;
-
-
 }

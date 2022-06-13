@@ -14,6 +14,6 @@ import lombok.NoArgsConstructor;
 
 public class SuccessResponse extends ServiceResponse {
 
-	protected Boolean success;
-	protected Object sessionId;
+    protected Boolean success;
+    protected Object sessionId;
 }

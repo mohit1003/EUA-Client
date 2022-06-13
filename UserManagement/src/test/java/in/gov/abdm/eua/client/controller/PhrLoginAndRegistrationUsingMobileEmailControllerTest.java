@@ -60,24 +60,22 @@ public class PhrLoginAndRegistrationUsingMobileEmailControllerTest {
     @BeforeEach
     public void setUp() throws IOException {
 
-      MockitoAnnotations.openMocks(this);
+        MockitoAnnotations.openMocks(this);
         otpDTO = new GenerateOTPRequest("boHpUHCCMad3BmRuFetZ+Xz31igXr6kneFDO4IZY0UpUVm3ep8RmW+lO9PZju1pnmVX7GPV5PuindHhEiypCAXugqaX9bgKHbsZrSWQYae4tcLLwJ0qCpjG8AzRCQBFXZDvxH/+T9ebVNiksIicU7wsEBv7q+3Gxv9Z3gXd+qvx/o3fxV8UXGXRirMt7bNYVLyZocFWu3pqPI7lZDZg2y8bjexNzV3B7xXCLgzB9Iqdqib5gBsogZoONnNGJ9+JeFlTyq+r3szO4xuYhGEleSahyvcB3s4nsjEow0HOG9FCQ4so3E0CX6XXf++rUU82cji+5eX6Pa/61XOUmGjhWiA==", "MOBILE_OTP");
         WebClient restClient = WebClient.create();
 
     }
 
 
-
-
     // Test cases for generateOtp begins --------
     @Test
     @Description(" To test that when provided empty/null request should return 400 bad-request error")
-    public void whenCalledGenerateOtpMethodOtpDtoValueShouldNotBeNull()  {
+    public void whenCalledGenerateOtpMethodOtpDtoValueShouldNotBeNull() {
         otpDTO = null;
         Mono<TransactionResponse> otpGenerateResponse = Mono.just(new TransactionResponse());
         otpGenerateResponse.subscribe(res -> {
-            res.setError("Request cannot be Null");
-            res.setCode("400");
+            res.getError().setErrorString("Request cannot be Null");
+            res.getError().setCode("400");
         });
 
         Assertions.assertThat(mobileEmailController.generateOtp(otpDTO).toString()).isEqualTo(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(otpGenerateResponse).toString());
@@ -89,8 +87,8 @@ public class PhrLoginAndRegistrationUsingMobileEmailControllerTest {
         otpDTO.setValue(null);
         Mono<TransactionResponse> otpGenerateResponse = Mono.just(new TransactionResponse());
         otpGenerateResponse.subscribe(r -> {
-            r.setError("Mobile number cannot be Null");
-            r.setCode("400");
+            r.getError().setErrorString("Mobile number cannot be Null");
+            r.getError().setCode("400");
         });
 
         Assertions.assertThat(mobileEmailController.generateOtp(otpDTO).toString()).isEqualTo(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(otpGenerateResponse).toString());
@@ -102,8 +100,8 @@ public class PhrLoginAndRegistrationUsingMobileEmailControllerTest {
         otpDTO.setAuthMode(null);
         Mono<TransactionResponse> otpGenerateResponse = Mono.just(new TransactionResponse());
         otpGenerateResponse.subscribe(r -> {
-            r.setError("AuthMode cannot be Null");
-            r.setCode("400");
+            r.getError().setErrorString("AuthMode cannot be Null");
+            r.getError().setCode("400");
         });
 
         Assertions.assertThat(mobileEmailController.generateOtp(otpDTO).toString()).isEqualTo(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(otpGenerateResponse).toString());
@@ -118,8 +116,8 @@ public class PhrLoginAndRegistrationUsingMobileEmailControllerTest {
         VerifyOTPRequest verifyOTPRequest = null;
         Mono<TransactionWithPHRResponse> response = Mono.just(new TransactionWithPHRResponse());
         response.subscribe(r -> {
-            r.setError("Request cannot be null");
-            r.setCode("400");
+            r.getError().setErrorString("Request cannot be null");
+            r.getError().setCode("400");
         });
 
 
@@ -135,8 +133,8 @@ public class PhrLoginAndRegistrationUsingMobileEmailControllerTest {
 
         Mono<TransactionWithPHRResponse> response = Mono.just(new TransactionWithPHRResponse());
         response.subscribe(r -> {
-            r.setError("OTP number cannot be null");
-            r.setCode("400");
+            r.getError().setErrorString("OTP number cannot be null");
+            r.getError().setCode("400");
         });
 
 
@@ -152,8 +150,8 @@ public class PhrLoginAndRegistrationUsingMobileEmailControllerTest {
 
         Mono<TransactionWithPHRResponse> response = Mono.just(new TransactionWithPHRResponse());
         response.subscribe(r -> {
-            r.setError("SessionId cannot be null");
-            r.setCode("400");
+            r.getError().setErrorString("SessionId cannot be null");
+            r.getError().setCode("400");
         });
 
 
@@ -169,8 +167,8 @@ public class PhrLoginAndRegistrationUsingMobileEmailControllerTest {
         ResendOTPRequest request = null;
         Mono<SuccessResponse> response = Mono.just(new SuccessResponse());
         response.subscribe(r -> {
-            r.setError("Request cannot be Null");
-            r.setCode("400");
+            r.getError().setErrorString("Request cannot be Null");
+            r.getError().setCode("400");
         });
 
 
@@ -185,14 +183,15 @@ public class PhrLoginAndRegistrationUsingMobileEmailControllerTest {
         Mono<SuccessResponse> response = Mono.just(new SuccessResponse());
 
         response.subscribe(r -> {
-            r.setError("SessionId cannot be Null");
-            r.setCode("400");
+            r.getError().setErrorString("SessionId cannot be Null");
+            r.getError().setCode("400");
         });
 
         Assertions.assertThat(mobileEmailController.resendOtp(request).toString()).isEqualTo(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response).toString());
 
     }
-// Test cases for resendOtp() ends --------
+
+    // Test cases for resendOtp() ends --------
 // Test cases for registerPhr() begins --------
     @Test
     @Description("To test when provided null request should return 400 bad-request error")
@@ -200,8 +199,8 @@ public class PhrLoginAndRegistrationUsingMobileEmailControllerTest {
         CreatePHRRequest verifyOTPRequest = null;
         Mono<JwtResponse> response = Mono.just(new JwtResponse());
         response.subscribe(r -> {
-            r.setError("Request cannot be null");
-            r.setCode("400");
+            r.getError().setErrorString("Request cannot be null");
+            r.getError().setCode("400");
         });
 
 
@@ -218,8 +217,8 @@ public class PhrLoginAndRegistrationUsingMobileEmailControllerTest {
         Mono<JwtResponse> response = Mono.just(new JwtResponse());
 
         response.subscribe(r -> {
-            r.setError("sessionId cannot be null");
-            r.setCode("400");
+            r.getError().setErrorString("sessionId cannot be null");
+            r.getError().setCode("400");
         });
 
 
@@ -235,12 +234,12 @@ public class PhrLoginAndRegistrationUsingMobileEmailControllerTest {
         verifyOTPRequest.setIsAlreadyExistedPHR(true);
         Mono<JwtResponse> response = Mono.just(new JwtResponse());
         response.subscribe(r -> {
-            r.setError("phrAddress cannot be null");
-            r.setCode("400");
+            r.getError().setErrorString("phrAddress cannot be null");
+            r.getError().setCode("400");
         });
 
 
-        Assertions.assertThat(mobileEmailController.registerPhr(verifyOTPRequest, null,null).toString()).isEqualTo(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response).toString());
+        Assertions.assertThat(mobileEmailController.registerPhr(verifyOTPRequest, null, null).toString()).isEqualTo(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response).toString());
     }
 
     // Test cases for registerPhr() ends --------
@@ -251,8 +250,8 @@ public class PhrLoginAndRegistrationUsingMobileEmailControllerTest {
     public void whenCalledregisterNewPhrRequestShouldNotBeNull() {
         Mono<TransactionResponse> response = Mono.just(new TransactionResponse());
         response.subscribe(r -> {
-            r.setError("Request cannot be null");
-            r.setCode("400");
+            r.getError().setErrorString("Request cannot be null");
+            r.getError().setCode("400");
 
         });
 
@@ -262,12 +261,12 @@ public class PhrLoginAndRegistrationUsingMobileEmailControllerTest {
     @Test
     @Description("To test when provided null sessionId should return 400 bad-request error")
     public void whenCalledregisterNewPhrSessionIdShouldNotBeNull() {
-        RegistrationByMobileOrEmailRequest request = new RegistrationByMobileOrEmailRequest(null,new RegistrationByMobileOrEmailRequest.NamePhrRegistration("","",""),new RegistrationByMobileOrEmailRequest.DateOfBirthRegistrationPhr("","",""),"anyString()","anyString()","anyString()","anyString()","anyString()","anyString()","anyString()","anyString()");
+        RegistrationByMobileOrEmailRequest request = new RegistrationByMobileOrEmailRequest(null, new RegistrationByMobileOrEmailRequest.NamePhrRegistration("", "", ""), new RegistrationByMobileOrEmailRequest.DateOfBirthRegistrationPhr("", "", ""), "anyString()", "anyString()", "anyString()", "anyString()", "anyString()", "anyString()", "anyString()", "anyString()");
 
         Mono<TransactionResponse> response = Mono.just(new TransactionResponse());
         response.subscribe(res -> {
-            res.setError("SessionId cannot be null");
-            res.setCode("400");
+            res.getError().setErrorString("SessionId cannot be null");
+            res.getError().setCode("400");
         });
 
 
@@ -277,12 +276,12 @@ public class PhrLoginAndRegistrationUsingMobileEmailControllerTest {
     @Test
     @Description("To test when provided null name should return 400 bad-request error")
     public void whenCalledRegisterNewPhrNameShouldNotBeNull() {
-        RegistrationByMobileOrEmailRequest request = new RegistrationByMobileOrEmailRequest("acsd",null,new RegistrationByMobileOrEmailRequest.DateOfBirthRegistrationPhr("","",""),"anyString()","anyString()","anyString()","anyString()","anyString","anyString()","anyString()","anyString()");
+        RegistrationByMobileOrEmailRequest request = new RegistrationByMobileOrEmailRequest("acsd", null, new RegistrationByMobileOrEmailRequest.DateOfBirthRegistrationPhr("", "", ""), "anyString()", "anyString()", "anyString()", "anyString()", "anyString", "anyString()", "anyString()", "anyString()");
 
         Mono<TransactionResponse> response = Mono.just(new TransactionResponse());
         response.subscribe(res -> {
-            res.setError("Name cannot be null");
-            res.setCode("400");
+            res.getError().setErrorString("Name cannot be null");
+            res.getError().setCode("400");
         });
 
 
@@ -292,12 +291,12 @@ public class PhrLoginAndRegistrationUsingMobileEmailControllerTest {
     @Test
     @Description("To test when provided null DateOfBirth should return 400 bad-request error")
     public void whenCalledRegisterNewPhrDOBShouldNotBeNull() {
-        RegistrationByMobileOrEmailRequest request = new RegistrationByMobileOrEmailRequest("any()",new RegistrationByMobileOrEmailRequest.NamePhrRegistration("", "", ""),null,"anyString()","anyString()","anyString()","anyString()","anyString","anyString()","anyString()","anyString()");
+        RegistrationByMobileOrEmailRequest request = new RegistrationByMobileOrEmailRequest("any()", new RegistrationByMobileOrEmailRequest.NamePhrRegistration("", "", ""), null, "anyString()", "anyString()", "anyString()", "anyString()", "anyString", "anyString()", "anyString()", "anyString()");
 
         Mono<TransactionResponse> response = Mono.just(new TransactionResponse());
         response.subscribe(res -> {
-            res.setError("Date of birth object cannot be Null");
-            res.setCode("400");
+            res.getError().setErrorString("Date of birth object cannot be Null");
+            res.getError().setCode("400");
         });
 
 
@@ -307,12 +306,12 @@ public class PhrLoginAndRegistrationUsingMobileEmailControllerTest {
     @Test
     @Description("To test when provided null First Name/ Last name/ middle name should return 400 bad-request error")
     public void whenCalledRegisterNewPhrNameFLMShouldNotBeNull() {
-        RegistrationByMobileOrEmailRequest request = new RegistrationByMobileOrEmailRequest("any()",new RegistrationByMobileOrEmailRequest.NamePhrRegistration(null,null, null),new RegistrationByMobileOrEmailRequest.DateOfBirthRegistrationPhr("","",""),"anyString()","anyString()","anyString()","anyString()","anyString","anyString()","anyString()","anyString()");
+        RegistrationByMobileOrEmailRequest request = new RegistrationByMobileOrEmailRequest("any()", new RegistrationByMobileOrEmailRequest.NamePhrRegistration(null, null, null), new RegistrationByMobileOrEmailRequest.DateOfBirthRegistrationPhr("", "", ""), "anyString()", "anyString()", "anyString()", "anyString()", "anyString", "anyString()", "anyString()", "anyString()");
 
         Mono<TransactionResponse> response = Mono.just(new TransactionResponse());
         response.subscribe(res -> {
-            res.setError("Invalid First/Middle/Last name. Null provided");
-            res.setCode("400");
+            res.getError().setErrorString("Invalid First/Middle/Last name. Null provided");
+            res.getError().setCode("400");
         });
 
 
@@ -322,12 +321,12 @@ public class PhrLoginAndRegistrationUsingMobileEmailControllerTest {
     @Test
     @Description("To test when provided null Date/Month/ year should return 400 bad-request error")
     public void whenCalledRegisterNewPhrDOB_DMYShouldNotBeNull() {
-        RegistrationByMobileOrEmailRequest request = new RegistrationByMobileOrEmailRequest("any()",new RegistrationByMobileOrEmailRequest.NamePhrRegistration("", "", ""),new RegistrationByMobileOrEmailRequest.DateOfBirthRegistrationPhr(null,null,null),"anyString()","anyString()","anyString()","anyString()","anyString","anyString()","anyString()","anyString()");
+        RegistrationByMobileOrEmailRequest request = new RegistrationByMobileOrEmailRequest("any()", new RegistrationByMobileOrEmailRequest.NamePhrRegistration("", "", ""), new RegistrationByMobileOrEmailRequest.DateOfBirthRegistrationPhr(null, null, null), "anyString()", "anyString()", "anyString()", "anyString()", "anyString", "anyString()", "anyString()", "anyString()");
 
         Mono<TransactionResponse> response = Mono.just(new TransactionResponse());
         response.subscribe(res -> {
-            res.setError("Invalid Date of birth (Date/Month/Year). Null provided");
-            res.setCode("400");
+            res.getError().setErrorString("Invalid Date of birth (Date/Month/Year). Null provided");
+            res.getError().setCode("400");
         });
 
 
@@ -337,12 +336,12 @@ public class PhrLoginAndRegistrationUsingMobileEmailControllerTest {
     @Test
     @Description("To test when provided null gender should return 400 bad-request error")
     public void whenCalledRegisterNewPhrGenderShouldNotBeNull() {
-        RegistrationByMobileOrEmailRequest request = new RegistrationByMobileOrEmailRequest("any()",new RegistrationByMobileOrEmailRequest.NamePhrRegistration("","",""),new RegistrationByMobileOrEmailRequest.DateOfBirthRegistrationPhr("","",""),null,"anyString()","anyString()","anyString()","anyString","anyString()","anyString()","anyString()");
+        RegistrationByMobileOrEmailRequest request = new RegistrationByMobileOrEmailRequest("any()", new RegistrationByMobileOrEmailRequest.NamePhrRegistration("", "", ""), new RegistrationByMobileOrEmailRequest.DateOfBirthRegistrationPhr("", "", ""), null, "anyString()", "anyString()", "anyString()", "anyString", "anyString()", "anyString()", "anyString()");
 
         Mono<TransactionResponse> response = Mono.just(new TransactionResponse());
         response.subscribe(res -> {
-            res.setError("Gender cannot be Null");
-            res.setCode("400");
+            res.getError().setErrorString("Gender cannot be Null");
+            res.getError().setCode("400");
         });
 
 
@@ -352,12 +351,12 @@ public class PhrLoginAndRegistrationUsingMobileEmailControllerTest {
     @Test
     @Description("To test when provided null stateCode should return 400 bad-request error")
     public void whenCalledRegisterNewPhrStateCodeShouldNotBeNull() {
-        RegistrationByMobileOrEmailRequest request = new RegistrationByMobileOrEmailRequest("any()",new RegistrationByMobileOrEmailRequest.NamePhrRegistration("","",""),new RegistrationByMobileOrEmailRequest.DateOfBirthRegistrationPhr("","",""),"anyString()",null,"anyString()","anyString()","anyString","anyString()","anyString()","anyString()");
+        RegistrationByMobileOrEmailRequest request = new RegistrationByMobileOrEmailRequest("any()", new RegistrationByMobileOrEmailRequest.NamePhrRegistration("", "", ""), new RegistrationByMobileOrEmailRequest.DateOfBirthRegistrationPhr("", "", ""), "anyString()", null, "anyString()", "anyString()", "anyString", "anyString()", "anyString()", "anyString()");
 
         Mono<TransactionResponse> response = Mono.just(new TransactionResponse());
-        response.subscribe(res-> {
-            res.setError("StateCode cannot be Null");
-            res.setCode("400");
+        response.subscribe(res -> {
+            res.getError().setErrorString("StateCode cannot be Null");
+            res.getError().setCode("400");
         });
 
         Assertions.assertThat(mobileEmailController.registerNewPhr(request).toString()).isEqualTo(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response).toString());
@@ -366,12 +365,12 @@ public class PhrLoginAndRegistrationUsingMobileEmailControllerTest {
     @Test
     @Description("To test when provided null DistrictCode should return 400 bad-request error")
     public void whenCalledRegisterNewPhrDistrictCodeShouldNotBeNull() {
-        RegistrationByMobileOrEmailRequest request = new RegistrationByMobileOrEmailRequest("any()",new RegistrationByMobileOrEmailRequest.NamePhrRegistration("","",""),new RegistrationByMobileOrEmailRequest.DateOfBirthRegistrationPhr("","",""),"anyString()","anyString()",null,"anyString()","anyString","anyString()","anyString()","anyString()");
+        RegistrationByMobileOrEmailRequest request = new RegistrationByMobileOrEmailRequest("any()", new RegistrationByMobileOrEmailRequest.NamePhrRegistration("", "", ""), new RegistrationByMobileOrEmailRequest.DateOfBirthRegistrationPhr("", "", ""), "anyString()", "anyString()", null, "anyString()", "anyString", "anyString()", "anyString()", "anyString()");
 
         Mono<TransactionResponse> response = Mono.just(new TransactionResponse());
         response.subscribe(res -> {
-            res.setError("DistrictCode cannot be Null");
-            res.setCode("400");
+            res.getError().setErrorString("DistrictCode cannot be Null");
+            res.getError().setCode("400");
         });
 
 
@@ -381,12 +380,12 @@ public class PhrLoginAndRegistrationUsingMobileEmailControllerTest {
     @Test
     @Description("To test when provided null Mobile should return 400 bad-request error")
     public void whenCalledRegisterNewPhrMobileShouldNotBeNull() {
-        RegistrationByMobileOrEmailRequest request = new RegistrationByMobileOrEmailRequest("any()",new RegistrationByMobileOrEmailRequest.NamePhrRegistration("","",""),new RegistrationByMobileOrEmailRequest.DateOfBirthRegistrationPhr("","",""),"anyString()","anyString()","anyString()","anyString()",null,"anyString()","anyString()","anyString()");
+        RegistrationByMobileOrEmailRequest request = new RegistrationByMobileOrEmailRequest("any()", new RegistrationByMobileOrEmailRequest.NamePhrRegistration("", "", ""), new RegistrationByMobileOrEmailRequest.DateOfBirthRegistrationPhr("", "", ""), "anyString()", "anyString()", "anyString()", "anyString()", null, "anyString()", "anyString()", "anyString()");
 
         Mono<TransactionResponse> response = Mono.just(new TransactionResponse());
         response.subscribe(res -> {
-            res.setError("DistrictCode cannot be Null");
-            res.setCode("400");
+            res.getError().setErrorString("DistrictCode cannot be Null");
+            res.getError().setCode("400");
         });
 
 
@@ -409,8 +408,8 @@ public class PhrLoginAndRegistrationUsingMobileEmailControllerTest {
     public void givenNullRequestShouldReturn400Error() {
         Mono<LoginViaMobileEmailRequestResponse> verifyErrorDetails = Mono.just(new LoginViaMobileEmailRequestResponse());
         verifyErrorDetails.subscribe(res -> {
-            res.setError("Request cannot be null");
-            res.setCode("400");
+            res.getError().setErrorString("Request cannot be null");
+            res.getError().setCode("400");
         });
 
         Assertions.assertThat(mobileEmailController.generateOtpForLogin(null, null, null).toString()).isEqualTo(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(verifyErrorDetails).toString());
@@ -554,8 +553,8 @@ public class PhrLoginAndRegistrationUsingMobileEmailControllerTest {
     public void givenNullRequestForAuthInitShouldReturn400Error() throws Exception {
         Mono<LoginViaMobileEmailRequestResponse> verifyErrorDetails = Mono.just(new LoginViaMobileEmailRequestResponse());
         verifyErrorDetails.subscribe(r -> {
-            r.setError("Request cannot be null");
-            r.setCode("400");
+            r.getError().setErrorString("Request cannot be null");
+            r.getError().setCode("400");
         });
 
         Assertions.assertThat(mobileEmailController.generateOtpForLogin(null, null, null).toString()).isEqualTo(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(verifyErrorDetails).toString());
@@ -626,9 +625,9 @@ public class PhrLoginAndRegistrationUsingMobileEmailControllerTest {
     @Description("To test that given null Request should return 400 bad request")
     public void givenNullRequestForPreVerifyShouldReturn400Error() throws Exception {
         Mono<LoginPostVerificationRequestResponse> verifyErrorDetails = Mono.just(new LoginPostVerificationRequestResponse());
-        verifyErrorDetails.subscribe(res-> {
-            res.setError("Request cannot be null");
-            res.setCode("400");
+        verifyErrorDetails.subscribe(res -> {
+            res.getError().setErrorString("Request cannot be null");
+            res.getError().setCode("400");
         });
 
         Assertions.assertThat(mobileEmailController.validateUserToken(null, null, null).toString()).isEqualTo(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(verifyErrorDetails).toString());

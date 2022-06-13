@@ -12,8 +12,8 @@ import lombok.ToString;
 @ToString
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class XtokenSchema extends ServiceResponse {
-private String expiresIn;
-private String refreshExpiresIn;
-private String refreshToken;
-private String token;
+    private String expiresIn;
+    private String refreshExpiresIn;
+    private String refreshToken;
+    private String token;
 }

@@ -1,13 +1,16 @@
 package in.gov.abdm.eua.userManagement.model;
 
+import lombok.Data;
+
 import javax.persistence.*;
 
 @Entity
-@Table(schema = "eua", name = "payments")
+@Table(schema = "eua")
+@Data
 public class Payments {
     @Id
     @Column(name = "transaction_id")
-    private Long transactionId;
+    private String transactionId;
     private String method;
     private String currency;
     @Column( name = "transaction_time_stamp")
@@ -21,15 +24,11 @@ public class Payments {
     @Column(name = "transaction_state")
     private String transactionState;
 
+    @Column(name = "healthIdNumber")
+    private String UserAbhaId;
+
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName ="user_id")
     private User user;
-
-    @OneToOne
-    @JoinColumn(name = "order_id", referencedColumnName ="order_id")
-    private Orders order;
-
-    @OneToOne
-    private Orders orders;
 
 }

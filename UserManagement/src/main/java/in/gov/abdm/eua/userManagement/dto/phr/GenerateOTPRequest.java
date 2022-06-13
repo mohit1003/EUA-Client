@@ -10,13 +10,13 @@ import lombok.Data;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 
-public class GenerateOTPRequest extends ServiceResponse{
+public class GenerateOTPRequest extends ServiceResponse {
 
-	public GenerateOTPRequest() {
-		super();
-	}
+    public GenerateOTPRequest() {
+        super();
+    }
 
-	private Object value;
-	private Object authMode;
+    private Object value;
+    private Object authMode;
 
 }

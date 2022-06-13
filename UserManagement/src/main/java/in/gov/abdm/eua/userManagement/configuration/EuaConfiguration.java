@@ -20,6 +20,7 @@ import javax.net.ssl.SSLException;
 //@EnableWebFlux
 public class EuaConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(EuaConfiguration.class);
+
     @Bean
     public WebClient webClient() throws SSLException {
         SslContext context = SslContextBuilder.forClient()

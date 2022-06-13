@@ -11,13 +11,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AccessTokenResponse {
 
-	private String accessToken;
+    private String accessToken;
 
-	long expiresIn;
+    long expiresIn;
 
-	public AccessTokenResponse(String accessToken) {
-		super();
-		this.accessToken = accessToken;
-	}
+    public AccessTokenResponse(String accessToken) {
+        super();
+        this.accessToken = accessToken;
+    }
 
 }

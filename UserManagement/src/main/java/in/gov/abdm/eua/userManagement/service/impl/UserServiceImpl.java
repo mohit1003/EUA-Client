@@ -69,10 +69,10 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void getUserProfile(String auth, String xtoken, @Valid OtpRequestForXToken request){
+    public void getUserProfile(String auth, String xtoken, @Valid OtpRequestForXToken request) {
         LOGGER.info("Inside function getUserProfile() ");
         Mono<UserDTO> userDTO = null;
-        if(xtoken != null && auth != null) {
+        if (xtoken != null && auth != null) {
             LinkPhrAddressToAbhaNumber addressToAbhaNumber = new LinkPhrAddressToAbhaNumber();
             addressToAbhaNumber.setPhrAddress(request.getMappedPhrAddress());
             addressToAbhaNumber.setPreferred(request.getPreferred());
@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
                 Mono<PhrAddressAbhaNumberLinkageStatus> linkedStatus = getPhrAddressAbhaNumberLinkageStatusMono(auth, xtoken, addressToAbhaNumber);
 
                 linkedStatus.subscribe(isLinked -> {
-                    if(isLinked.getStatus()){
+                    if (isLinked.getStatus()) {
                         this.webClient.get().uri(abhaBaseUrl + getUserProfileUrl)
                                 .headers(httpHeaders -> {
                                     httpHeaders.add("Authorization", auth);
@@ -90,24 +90,22 @@ public class UserServiceImpl implements UserService {
                                 .retrieve()
                                 .onStatus(HttpStatus::is4xxClientError,
                                         response -> response.bodyToMono(LoginPostVerificationRequestResponse.class)
-                                                .flatMap(error -> Mono.error(new PhrException500(error.getError()))))
+                                                .flatMap(error -> Mono.error(new PhrException500(error.getError().getErrorString()))))
                                 .onStatus(HttpStatus::is5xxServerError,
                                         response -> response.bodyToMono(LoginPostVerificationRequestResponse.class)
-                                                .flatMap(error -> Mono.error(new PhrException500(error.getError()))))
+                                                .flatMap(error -> Mono.error(new PhrException500(error.getError().getErrorString()))))
                                 .bodyToMono(UserDTO.class)
                                 .subscribe(res -> {
-                                    if(res != null) {
+                                    if (res != null) {
                                         saveUserToDb(res);
                                     }
                                 });
-                    }
-                    else {
+                    } else {
                         throw new PhrException500("Error mapping phrAddress to Abha Number. Cannot store user to DB");
                     }
                 });
 
-            }
-            catch (PhrException400 | PhrException500 e) {
+            } catch (PhrException400 | PhrException500 e) {
                 LOGGER.error("Cannot store user details in DB ");
                 LOGGER.error(e.getLocalizedMessage());
             }
@@ -128,7 +126,7 @@ public class UserServiceImpl implements UserService {
 
     //    @Async TODO: Make this async
     @Override
-    public void saveUserToDb(UserDTO userDTO){
+    public void saveUserToDb(UserDTO userDTO) {
         Address address = modelMapper.map(userDTO, Address.class);
 
         Set<UserAbhaAddress> abhaAddressSet = new HashSet<>();
@@ -141,7 +139,7 @@ public class UserServiceImpl implements UserService {
             userAbhaAddress = null;
         });
 
-        if(abhaAddressSet.isEmpty()) {
+        if (abhaAddressSet.isEmpty()) {
             LOGGER.error("No abha address found");
             throw new PhrException500("No abha address found");
         }
@@ -154,30 +152,29 @@ public class UserServiceImpl implements UserService {
     public void saveUserRefreshToken(String refreshToken, @Valid LoginPostVerificationRequest otpDTO) {
         List<UserAbhaAddress> abhaAddressList = abhaAddressRepo.findByPhrAddress(otpDTO.getPatientId().toString());
         Long userId = null;
-        if(!abhaAddressList.isEmpty()) {
+        if (!abhaAddressList.isEmpty()) {
             userId = abhaAddressList.get(0).getUser().getUserId();
-        }
-        else{
+        } else {
             LOGGER.error("No abha address found");
             throw new PhrException500("No abha address found");
         }
         User user = abhaAddressList.get(0).getUser();
-            UserRefreshToken userRefreshToken = new UserRefreshToken();
-            userRefreshToken.setRefreshToken(refreshToken);
-            userRefreshToken.setUser(user);
+        UserRefreshToken userRefreshToken = new UserRefreshToken();
+        userRefreshToken.setRefreshToken(refreshToken);
+        userRefreshToken.setUser(user);
 
-            refreshTokenRepo.save(userRefreshToken);
+        refreshTokenRepo.save(userRefreshToken);
 
 
     }
 
     public String getUserRefreshTokenFromAbhaNumber(String healthIdNo) {
         UserRefreshToken byUserHealthIdNumber = refreshTokenRepo.getByUserHealthIdNumber(healthIdNo);
-        if(byUserHealthIdNumber == null) {
+        if (byUserHealthIdNumber == null) {
             LOGGER.error("HealthIdNumber/Abhanumber not found");
             throw new PhrException500("HealthIdNumber/Abhanumber not found");
         }
-        LOGGER.info("Refreshtoken with user retrieved is "+byUserHealthIdNumber.getRefreshToken());
+        LOGGER.info("Refreshtoken with user retrieved is " + byUserHealthIdNumber.getRefreshToken());
 
         return byUserHealthIdNumber.getRefreshToken();
     }
@@ -186,7 +183,7 @@ public class UserServiceImpl implements UserService {
         LOGGER.info("Inside method to save new PHR adress after /registration/hid/create/phrAddress");
 
         User user = userRepo.findByHealthIdNumber(healthIdNumber);
-        if(null != user) {
+        if (null != user) {
             Set<UserAbhaAddress> user_abhaAddresses = user.getUser_abhaAddresses();
             UserAbhaAddress userAbhaAddressNew = new UserAbhaAddress();
             userAbhaAddressNew.setPhrAddress(newPhrAddress);
@@ -195,16 +192,15 @@ public class UserServiceImpl implements UserService {
 
             user.setUser_abhaAddresses(user_abhaAddresses);
 
-            LOGGER.info("User to be saved "+user);
+            LOGGER.info("User to be saved " + user);
 
             userRepo.save(user);
             userAbhaAddressNew = null;
             user_abhaAddresses = null;
             LOGGER.info("User Phr number saved successfully");
-        }
-        else{
-            LOGGER.error("User with abha number "+healthIdNumber+" not found");
-            throw new PhrException500("User with abha number "+healthIdNumber+" not found");
+        } else {
+            LOGGER.error("User with abha number " + healthIdNumber + " not found");
+            throw new PhrException500("User with abha number " + healthIdNumber + " not found");
         }
     }
 
@@ -221,17 +217,17 @@ public class UserServiceImpl implements UserService {
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
         TypeMap<HidResponse, UserDTO> mapperMobileEmail = this.modelMapper.createTypeMap(HidResponse.class, UserDTO.class);
 
-        mapperMobileEmail.addMapping(src-> src.getName().getFirstName(),UserDTO::setFirstName);
-        mapperMobileEmail.addMapping(src-> src.getName().getMiddleName(),UserDTO::setMiddleName);
-        mapperMobileEmail.addMapping(src-> src.getName().getLastName(),UserDTO::setLastName);
+        mapperMobileEmail.addMapping(src -> src.getName().getFirstName(), UserDTO::setFirstName);
+        mapperMobileEmail.addMapping(src -> src.getName().getMiddleName(), UserDTO::setMiddleName);
+        mapperMobileEmail.addMapping(src -> src.getName().getLastName(), UserDTO::setLastName);
 
-        mapperMobileEmail.addMapping(src-> src.getDateOfBirth().getDate(),UserDTO::setDayOfBirth);
-        mapperMobileEmail.addMapping(src-> src.getDateOfBirth().getMonth(),UserDTO::setMonthOfBirth);
-        mapperMobileEmail.addMapping(src-> src.getDateOfBirth().getYear(),UserDTO::setYearOfBirth);
+        mapperMobileEmail.addMapping(src -> src.getDateOfBirth().getDate(), UserDTO::setDayOfBirth);
+        mapperMobileEmail.addMapping(src -> src.getDateOfBirth().getMonth(), UserDTO::setMonthOfBirth);
+        mapperMobileEmail.addMapping(src -> src.getDateOfBirth().getYear(), UserDTO::setYearOfBirth);
 
         userDTO = this.modelMapper.map(userData, UserDTO.class);
 
-        LOGGER.info("Mapped userDto is "+ userDTO);
+        LOGGER.info("Mapped userDto is " + userDTO);
 
         return userDTO;
 
