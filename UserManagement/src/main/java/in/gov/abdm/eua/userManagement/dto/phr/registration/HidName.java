@@ -10,7 +10,15 @@
  * Do not edit the class manually.
  */
 
+<<<<<<< HEAD
+<<<<<<< HEAD:UserManagement/src/main/java/in/gov/abdm/eua/userManagement/dto/phr/registration/HidName.java
 package in.gov.abdm.eua.userManagement.dto.phr.registration;
+=======
+package in.gov.abdm.eua.service.dto.phr.registration;
+>>>>>>> 9dbb9f3cbb1548b28a5c1ef4dea8ca3f1144235a:EUAclient/src/main/java/in/gov/abdm/eua/service/dto/phr/registration/HidResponseName.java
+=======
+package in.gov.abdm.eua.userManagement.dto.phr.registration;
+>>>>>>> 9dbb9f3cbb1548b28a5c1ef4dea8ca3f1144235a
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.AllArgsConstructor;

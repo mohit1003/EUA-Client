@@ -1,4 +1,12 @@
+<<<<<<< HEAD
+<<<<<<< HEAD:UserManagement/src/main/java/in/gov/abdm/eua/userManagement/model/Orders.java
 package in.gov.abdm.eua.userManagement.model;
+=======
+package in.gov.abdm.eua.service.model;
+>>>>>>> 9dbb9f3cbb1548b28a5c1ef4dea8ca3f1144235a:EUAclient/src/main/java/in/gov/abdm/eua/service/model/Orders.java
+=======
+package in.gov.abdm.eua.userManagement.model;
+>>>>>>> 9dbb9f3cbb1548b28a5c1ef4dea8ca3f1144235a
 
 import lombok.Data;
 
@@ -62,6 +70,18 @@ public class Orders {
     private String healthcareProfessionalDepartment;
     @Column(name = "Message",length = 50000)
     private String message;
+<<<<<<< HEAD
+<<<<<<< HEAD:UserManagement/src/main/java/in/gov/abdm/eua/userManagement/model/Orders.java
+
+    @ManyToOne
+    @JoinColumn(name = "user_id",  referencedColumnName ="user_id")
+    private User user;
+    @Column(name = "healthIdNumber")
+    private String abhaId;
+=======
+>>>>>>> 9dbb9f3cbb1548b28a5c1ef4dea8ca3f1144235a:EUAclient/src/main/java/in/gov/abdm/eua/service/model/Orders.java
+=======
+>>>>>>> 9dbb9f3cbb1548b28a5c1ef4dea8ca3f1144235a
 
     @ManyToOne
     @JoinColumn(name = "user_id",  referencedColumnName ="user_id")
@@ -73,4 +93,13 @@ public class Orders {
     @OneToOne
     @JoinColumn(name = "transaction_id", referencedColumnName ="transaction_id")
     private Payments payment;
+<<<<<<< HEAD
+
+    @OneToOne
+    @JoinColumn(name = "transaction_id", referencedColumnName ="transaction_id")
+    private Payments payment;
 }
+
+=======
+}
+>>>>>>> 9dbb9f3cbb1548b28a5c1ef4dea8ca3f1144235a

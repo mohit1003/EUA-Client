@@ -25,7 +25,6 @@ public class EuaServiceTest {
 
     RabbitTemplate rabbitTemplate;
 
-
     @Mock
     ObjectMapper objectMapper;
 
@@ -72,6 +71,7 @@ public class EuaServiceTest {
         AckResponseDTO ackResponseDTO = objectMapper.readValue(ack, AckResponseDTO.class);
         ResponseEntity<AckResponseDTO> ans = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ackResponseDTO);
 
+
         Assertions.assertThat(euaService.getOnAckResponseResponseEntity(objectMapper, null, "search", "requestMessageId")).isEqualTo(ans);
 
     }
@@ -86,6 +86,7 @@ public class EuaServiceTest {
         message.setConsumerId("121223");
 
         MqMessageTO testMesssage = euaService.extractMessage("129iedjed", "121223", "response", "search");
+
         testMesssage.setCreatedAt(dateTime);
 
         Assertions.assertThat(testMesssage).isEqualTo(message);

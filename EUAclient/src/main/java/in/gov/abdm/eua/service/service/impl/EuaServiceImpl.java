@@ -37,23 +37,25 @@ public class EuaServiceImpl implements EuaService {
         LOGGER.info("Pushing to MQ. Message ID is "+ requestMessageId);
         LOGGER.info("Inside GATEWAY_TO_EUA queue convertAndSend... Queue name is =====> "+ConstantsUtils.ROUTING_KEY_GATEWAY_TO_EUA);
         template.convertAndSend(ConstantsUtils.EXCHANGE, ConstantsUtils.ROUTING_KEY_GATEWAY_TO_EUA, message);
+
+
     }
 
     @Override
-    public void pushToMq(String searchRequest, String consumerId, String action, String requestMessageId) {
+    public void pushToMq(String searchRequest, String clientId, String action, String requestMessageId) {
         LOGGER.info("Pushing to MQ. Message ID is "+ requestMessageId);
-        MqMessageTO message = extractMessage(requestMessageId, consumerId,searchRequest, action);
+        MqMessageTO message = extractMessage(searchRequest,clientId, requestMessageId, action);
         template.convertAndSend(ConstantsUtils.EXCHANGE, ConstantsUtils.ROUTING_KEY_EUA_TO_GATEWAY, message);
     }
 
     @Override
-    public MqMessageTO extractMessage(String requestMessageId, String consumerId, String onRequestStringResponse, String dhpQueryType) {
+    public MqMessageTO extractMessage(String searchRequest, String consumerId, String requestMessageId, String action) {
         MqMessageTO message = new MqMessageTO();
         message.setMessageId(requestMessageId);
+        message.setConsumerId(consumerId);
         message.setCreatedAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS).toString());
-        message.setDhpQueryType(dhpQueryType);
-        message.setResponse(onRequestStringResponse);
-
+        message.setResponse(searchRequest);
+        message.setDhpQueryType(action);
         return message;
     }
 
@@ -71,6 +73,7 @@ public class EuaServiceImpl implements EuaService {
             String onRequestAckJsonString = "{ \"message\": { \"ack\": { \"status\": \"ACK\" } } }";
             AckResponseDTO onSearchAck = objectMapper.readValue(onRequestAckJsonString, AckResponseDTO.class);
             return new ResponseEntity<>(onSearchAck, HttpStatus.OK);
+
         }
     }
 }

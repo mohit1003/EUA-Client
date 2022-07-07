@@ -1,4 +1,12 @@
+<<<<<<< HEAD
+<<<<<<< HEAD:UserManagement/src/main/java/in/gov/abdm/eua/userManagement/model/Payments.java
 package in.gov.abdm.eua.userManagement.model;
+=======
+package in.gov.abdm.uhi.EUABookingService.Entity;
+>>>>>>> 9dbb9f3cbb1548b28a5c1ef4dea8ca3f1144235a:EUA-BookingService/src/main/java/in/gov/abdm/uhi/EUABookingService/Entity/Payments.java
+=======
+package in.gov.abdm.eua.userManagement.model;
+>>>>>>> 9dbb9f3cbb1548b28a5c1ef4dea8ca3f1144235a
 
 import lombok.Data;
 

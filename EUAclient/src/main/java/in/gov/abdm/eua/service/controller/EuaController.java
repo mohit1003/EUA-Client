@@ -11,6 +11,7 @@ import in.gov.abdm.eua.service.service.impl.EuaServiceImpl;
 import in.gov.abdm.eua.service.service.impl.MQConsumerServiceImpl;
 import in.gov.abdm.uhi.common.dto.Fulfillment;
 import in.gov.abdm.uhi.common.dto.MessageAck;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -51,14 +52,14 @@ public class EuaController {
 	private ObjectMapper objectMapper;
 
 	public EuaController(EuaServiceImpl euaService, ObjectMapper objectMapper,
-						@Value("${spring.abdm_eua_url}")
-						String abdmEUAURl,
+						 @Value("${spring.abdm_eua_url}")
+								 String abdmEUAURl,
 						 @Value("${spring.abdm_bookingService_url}")
-						 String bookignServiceUrl,
+								 String bookignServiceUrl,
 						 @Value("${spring.abdm_gateway_url}")
-						 String abdmGatewayUrl,
+								 String abdmGatewayUrl,
 						 MQConsumerServiceImpl mqConsumerServiceImpl
-						 ) {
+	) {
 
 		this.mqService = mqConsumerServiceImpl;
 
@@ -69,9 +70,10 @@ public class EuaController {
 		this.abdmEUAURl = abdmEUAURl;
 		this.bookignServiceUrl = bookignServiceUrl;
 
-		LOGGER.info("EUA url "+ abdmEUAURl);
-		LOGGER.info("Gateway url "+ abdmGatewayUrl);
-		LOGGER.info("bookignServiceUrl "+ bookignServiceUrl);
+
+		LOGGER.info("EUA url " + abdmEUAURl);
+		LOGGER.info("Gateway url " + abdmGatewayUrl);
+		LOGGER.info("bookignServiceUrl " + bookignServiceUrl);
 	}
 
 
@@ -98,12 +100,15 @@ public class EuaController {
 			ResponseEntity<AckResponseDTO> onSearchAck = getResponseEntityForErrorCases(onSearchRequest, objectMapper);
 			if (onSearchAck != null) return onSearchAck;
 
-			LOGGER.info("Message ID is "+ onSearchRequest.getContext().getMessageId());
+			LOGGER.info("Message ID is " + onSearchRequest.getContext().getMessageId());
 			String onRequestString = ow.writeValueAsString(onSearchRequest);
 			String requestMessageId = onSearchRequest.getContext().getMessageId();
 
 			LOGGER.info("Request Body :" + onRequestString);
-			MqMessageTO message = euaService.extractMessage(requestMessageId, onSearchRequest.getContext().getConsumerId(), onRequestString, onSearchRequest.getContext().getAction());
+			String consumerId = onSearchRequest.getContext().getConsumerId();
+			String action = onSearchRequest.getContext().getAction();
+			MqMessageTO message = euaService.extractMessage(onRequestString, consumerId, requestMessageId, action);
+
 
 			euaService.pushToMqGatewayTOEua(message, requestMessageId);
 
@@ -120,6 +125,7 @@ public class EuaController {
 	@PostMapping("/on_select")
 	public ResponseEntity<AckResponseDTO> onSelect(@RequestBody EuaRequestBody onSelectRequest) throws JsonProcessingException {
 
+
 		LOGGER.info("Inside on_select API ");
 
 		ObjectWriter ow = new ObjectMapper().writer();
@@ -132,7 +138,9 @@ public class EuaController {
 			String requestMessageId = onSelectRequest.getContext().getMessageId();
 
 			LOGGER.info("Request Body :" + onRequestString);
-			MqMessageTO message = euaService.extractMessage(requestMessageId, onSelectRequest.getContext().getConsumerId(), onRequestString, onSelectRequest.getContext().getAction());
+			String consumerId = onSelectRequest.getContext().getConsumerId();
+			String action = onSelectRequest.getContext().getAction();
+			MqMessageTO message = euaService.extractMessage(onRequestString, consumerId, requestMessageId, action);
 			euaService.pushToMqGatewayTOEua(message, requestMessageId);
 
 			return euaService.getOnAckResponseResponseEntity(objectMapper, onRequestString, "on_select", requestMessageId);
@@ -156,6 +164,7 @@ public class EuaController {
 							description = "Success",
 							responseCode = "200",
 							content = @Content(mediaType = "application/json", schema = @Schema(implementation = MessageAck.class))
+
 					),
 					@ApiResponse(description = "Not found", responseCode = "404", content = @Content),
 					@ApiResponse(description = "Internal error", responseCode = "500", content = @Content)
@@ -163,12 +172,13 @@ public class EuaController {
 	)
 	public ResponseEntity<Mono<AckResponseDTO>> onInit(@RequestBody EuaRequestBody onInitRequest) throws JsonProcessingException {
 
+
 		LOGGER.info("Inside on_init API ");
 
 		ObjectWriter ow = new ObjectMapper().writer();
 		ObjectMapper objectMapper = new ObjectMapper();
 
-		try{
+		try {
 			ResponseEntity<AckResponseDTO> onInitAckResp = getResponseEntityForErrorCases(onInitRequest, objectMapper);
 			if (onInitAckResp != null) {
 				ResponseEntity<AckResponseDTO> bodyError = ResponseEntity.status(onInitAckResp.getStatusCode()).body(Objects.requireNonNull(onInitAckResp.getBody()));
@@ -179,12 +189,13 @@ public class EuaController {
 			String requestMessageId = onInitRequest.getContext().getMessageId();
 
 			LOGGER.info("Request Body :" + onRequestString);
-			final MqMessageTO message = euaService.extractMessage(requestMessageId, onInitRequest.getContext().getConsumerId(), onRequestString, onInitRequest.getContext().getAction());
+			String consumerId = onInitRequest.getContext().getConsumerId();
+			String action = onInitRequest.getContext().getAction();
+			final MqMessageTO message = euaService.extractMessage(onRequestString, consumerId, requestMessageId, action);
+			Mono<AckResponseDTO> callToBookingService = mqService.getAckResponseResponseEntity(onInitRequest, bookignServiceUrl);
 
-			Mono<AckResponseDTO> callToBookingService = mqService.getAckResponseResponseEntity(onInitRequest,  bookignServiceUrl);
-
-				LOGGER.info("printing response from booking service :: "+callToBookingService);
-				euaService.pushToMqGatewayTOEua(message, requestMessageId);
+			LOGGER.info("printing response from booking service :: " + callToBookingService);
+			euaService.pushToMqGatewayTOEua(message, requestMessageId);
 
 			return ResponseEntity.status(HttpStatus.OK).body(callToBookingService);
 
@@ -204,12 +215,14 @@ public class EuaController {
 							description = "Success",
 							responseCode = "200",
 							content = @Content(mediaType = "application/json", schema = @Schema(implementation = MessageAck.class))
+
 					),
 					@ApiResponse(description = "Not found", responseCode = "404", content = @Content),
 					@ApiResponse(description = "Internal error", responseCode = "500", content = @Content)
 			}
 	)
 	public ResponseEntity<Mono<AckResponseDTO>> onConfirm(@RequestBody EuaRequestBody onConfirmRequest) throws JsonProcessingException {
+
 
 		LOGGER.info("Inside on_confirm API ");
 
@@ -227,12 +240,14 @@ public class EuaController {
 			String requestMessageId = onConfirmRequest.getContext().getMessageId();
 
 			LOGGER.info("Request Body :" + onRequestString);
-			MqMessageTO message = euaService.extractMessage(requestMessageId, onConfirmRequest.getContext().getConsumerId(), onRequestString, onConfirmRequest.getContext().getAction());
 
-			Mono<AckResponseDTO> callToBookingService = mqService.getAckResponseResponseEntity(onConfirmRequest,  bookignServiceUrl);
+			String consumerId = onConfirmRequest.getContext().getConsumerId();
+			String action = onConfirmRequest.getContext().getAction();
+			final MqMessageTO message = euaService.extractMessage(onRequestString, consumerId, requestMessageId, action);
+			Mono<AckResponseDTO> callToBookingService = mqService.getAckResponseResponseEntity(onConfirmRequest, bookignServiceUrl);
 
-				LOGGER.info("printing response from booking service :: "+callToBookingService);
-				euaService.pushToMqGatewayTOEua(message, requestMessageId);
+			LOGGER.info("printing response from booking service :: " + callToBookingService);
+			euaService.pushToMqGatewayTOEua(message, requestMessageId);
 
 			return ResponseEntity.status(HttpStatus.OK).body(callToBookingService);
 
@@ -269,8 +284,9 @@ public class EuaController {
 			if (onSelectAck != null) return onSelectAck;
 
 			LOGGER.info("Request Body :" + onRequestString);
-			MqMessageTO message = euaService.extractMessage(requestMessageId, onStatusRequest.getContext().getConsumerId(), onRequestString, onStatusRequest.getContext().getAction());
-
+			String consumerId = onStatusRequest.getContext().getConsumerId();
+			String action = onStatusRequest.getContext().getAction();
+			final MqMessageTO message = euaService.extractMessage(onRequestString, consumerId, requestMessageId, action);
 			euaService.pushToMqGatewayTOEua(message, requestMessageId);
 
 			return euaService.getOnAckResponseResponseEntity(objectMapper, onRequestString, "on_status", requestMessageId);
@@ -309,8 +325,10 @@ public class EuaController {
 			if (onCancelAck != null) return onCancelAck;
 
 			LOGGER.info("Request Body :" + onRequestString);
-			MqMessageTO message = euaService.extractMessage(requestMessageId, onCancelRequest.getContext().getConsumerId(), onRequestString, onCancelRequest.getContext().getAction());
+			String consumerId = onCancelRequest.getContext().getConsumerId();
+			String action = onCancelRequest.getContext().getAction();
 
+			final MqMessageTO message = euaService.extractMessage(onRequestString, consumerId, requestMessageId, action);
 			euaService.pushToMqGatewayTOEua(message, requestMessageId);
 
 			return euaService.getOnAckResponseResponseEntity(objectMapper, onRequestString, "on_cancel", requestMessageId);
@@ -364,21 +382,18 @@ public class EuaController {
 
 		try {
 			LOGGER.info("Request Body :" + onRequestString);
-			euaService.pushToMq( onRequestString,clientId, action, requestMessageId);
+			euaService.pushToMq(onRequestString, clientId, action, requestMessageId);
 
 			LOGGER.info("Request Body enqueued successfully:" + onRequestString);
 
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			LOGGER.error(e.toString());
-
 			mqService.prepareAndSendNackResponse(ConstantsUtils.NACK_RESPONSE, requestMessageId);
 			return getNackResponseResponseEntityWithoutMono();
 		}
 
 		return searchAck;
 	}
-
 
 
 	@PostMapping("/select")
@@ -400,7 +415,6 @@ public class EuaController {
 		String requestMessageId = selectRequest.getContext().getMessageId();
 		String clientId = selectRequest.getContext().getConsumerId();
 		String action = selectRequest.getContext().getAction();
-
 
 		try {
 			LOGGER.info("Provider URI :" + providerURI);
@@ -435,6 +449,7 @@ public class EuaController {
 			}
 	)
 	public ResponseEntity<AckResponseDTO> init(@RequestBody EuaRequestBody initRequest) throws JsonProcessingException {
+
 		String url;
 		LOGGER.info("Inside init API ");
 		ObjectWriter ow = new ObjectMapper().writer();
@@ -457,7 +472,7 @@ public class EuaController {
 			LOGGER.info("Provider URI :" + providerURI);
 			LOGGER.info("Request Body :" + onRequestString);
 
-			euaService.pushToMq(onRequestString, clientId,action, requestMessageId);
+			euaService.pushToMq(onRequestString, clientId, action, requestMessageId);
 
 			LOGGER.info("Request Body enqueued successfully:" + onRequestString);
 
@@ -487,6 +502,7 @@ public class EuaController {
 			}
 	)
 	public ResponseEntity<AckResponseDTO> confirm(@RequestBody EuaRequestBody confirmRequest) throws JsonProcessingException {
+
 		LOGGER.info("Inside confirm API ");
 
 		ObjectWriter ow = new ObjectMapper().writer();
@@ -499,6 +515,7 @@ public class EuaController {
 
 
 		ResponseEntity<AckResponseDTO> searchAck = getResponseEntityForErrorCases(confirmRequest, objectMapper);
+
 		if (searchAck != null)
 			return searchAck;
 		else
@@ -610,7 +627,6 @@ public class EuaController {
 			LOGGER.info("Request Body :" + onRequestString);
 
 			euaService.pushToMq(onRequestString, clientId, action, requestMessageId);
-
 			LOGGER.info("Request Body enqueued successfully:" + onRequestString);
 
 		} catch (Exception e) {
@@ -620,7 +636,6 @@ public class EuaController {
 		}
 		return searchAck;
 	}
-
 
 
 	private ResponseEntity<AckResponseDTO> getResponseEntityForErrorCases(EuaRequestBody onSearchRequest, ObjectMapper objectMapper) throws JsonProcessingException {
@@ -636,7 +651,7 @@ public class EuaController {
 
 
 	private ResponseEntity<AckResponseDTO> checkIfPersonNameIsNull(ObjectMapper objectMapper, List<Fulfillment> fulfillmentPersonWithNoNameList) throws JsonProcessingException {
-		if(!fulfillmentPersonWithNoNameList.isEmpty()) {
+		if (!fulfillmentPersonWithNoNameList.isEmpty()) {
 			String onSearchAckJsonErrorString = "{ \"message\": { \"ack\": { \"status\": \"NACK\" } }, \"error\": { \"type\": \"\", \"code\": \"500\", \"path\": \"string\", \"message\": \"Mandatory field person name in one of the result is null\" } }";
 			AckResponseDTO onSearchAck = objectMapper.readValue(onSearchAckJsonErrorString, AckResponseDTO.class);
 			return new ResponseEntity<>(onSearchAck, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -645,8 +660,8 @@ public class EuaController {
 	}
 
 	private ResponseEntity<AckResponseDTO> checkIfMandatoryfieldsInContextAreNull(EuaRequestBody onSearchRequest, ObjectMapper objectMapper) throws JsonProcessingException {
-		if(null == onSearchRequest.getContext().getAction()
-				||null == onSearchRequest.getContext().getDomain()
+		if (null == onSearchRequest.getContext().getAction()
+				|| null == onSearchRequest.getContext().getDomain()
 				|| null == onSearchRequest.getContext().getCity()
 				|| null == onSearchRequest.getContext().getCountry()
 				|| null == onSearchRequest.getContext().getCoreVersion()
@@ -664,7 +679,7 @@ public class EuaController {
 	}
 
 	private ResponseEntity<AckResponseDTO> checkIfContextIsNull(EuaRequestBody onSearchRequest, ObjectMapper objectMapper) throws JsonProcessingException {
-		if(null == onSearchRequest.getContext()) {
+		if (null == onSearchRequest.getContext()) {
 			String onSearchAckJsonErrorString = "{ \"message\": { \"ack\": { \"status\": \"NACK\" } }, \"error\": { \"type\": \"\", \"code\": \"500\", \"path\": \"string\", \"message\": \"Context is Null\" } }";
 			AckResponseDTO onSearchAck = objectMapper.readValue(onSearchAckJsonErrorString, AckResponseDTO.class);
 			return new ResponseEntity<>(onSearchAck, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -673,11 +688,12 @@ public class EuaController {
 	}
 
 	private ResponseEntity<AckResponseDTO> checkIfMessageIsNull(EuaRequestBody onSearchRequest, ObjectMapper objectMapper) throws JsonProcessingException {
-		if(null == onSearchRequest.getMessage()) {
+		if (null == onSearchRequest.getMessage()) {
 			String onSearchAckJsonErrorString = "{ \"message\": { \"ack\": { \"status\": \"NACK\" } }, \"error\": { \"type\": \"\", \"code\": \"500\", \"path\": \"string\", \"message\": \"Message is Null\" } }";
 			AckResponseDTO onSearchAck = objectMapper.readValue(onSearchAckJsonErrorString, AckResponseDTO.class);
 			return new ResponseEntity<>(onSearchAck, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return null;
 	}
+
 }

@@ -1,6 +1,4 @@
 package in.gov.abdm.eua.userManagement.dto.dhp;
-
-
 import in.gov.abdm.uhi.common.dto.Context;
 import in.gov.abdm.uhi.common.dto.Message;
 import lombok.AllArgsConstructor;
@@ -15,4 +13,5 @@ import lombok.ToString;
 public class EuaRequestBody {
     private Context context;
     private Message message;
+
 }

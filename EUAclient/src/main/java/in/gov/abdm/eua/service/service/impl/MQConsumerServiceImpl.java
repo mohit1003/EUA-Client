@@ -2,10 +2,10 @@ package in.gov.abdm.eua.service.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rabbitmq.client.Channel;
 import in.gov.abdm.eua.service.constants.ConstantsUtils;
 import in.gov.abdm.eua.service.dto.dhp.AckResponseDTO;
 import in.gov.abdm.eua.service.dto.dhp.EuaRequestBody;
+
 import in.gov.abdm.eua.service.dto.dhp.MqMessageTO;
 import in.gov.abdm.eua.service.exceptions.PhrException400;
 import in.gov.abdm.eua.service.exceptions.PhrException500;
@@ -13,10 +13,8 @@ import in.gov.abdm.eua.service.service.MQConsumerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Service;
@@ -24,9 +22,9 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+
 
 @Service
 public class MQConsumerServiceImpl implements MQConsumerService {
@@ -50,7 +48,6 @@ public class MQConsumerServiceImpl implements MQConsumerService {
         this.messagingTemplate = template;
         this.webClient = webClient;
         this.simpUserRegistry = simpUserRegistry;
-
     }
 
     @PostConstruct
@@ -92,9 +89,6 @@ public class MQConsumerServiceImpl implements MQConsumerService {
         return ackResponseMono;
     }
 
-
-
-
     private String getAppropriateUrl(EuaRequestBody request, String bookignServiceUrl) {
         String url;
         if( null != request.getContext().getProviderUri()) {
@@ -124,7 +118,7 @@ public class MQConsumerServiceImpl implements MQConsumerService {
 
     @Override
     @RabbitListener(queues = ConstantsUtils.QUEUE_EUA_TO_GATEWAY)
-    public void euaToGatewayConsumer(MqMessageTO request, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
+    public void euaToGatewayConsumer(MqMessageTO request) throws IOException, JsonProcessingException {
         LOGGER.info("Message read from MQ EUA_TO_GATEWAY::" + request);
 
         EuaRequestBody requestClass = objectMapper.readValue(request.getResponse(), EuaRequestBody.class);

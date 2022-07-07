@@ -10,9 +10,21 @@
  * Do not edit the class manually.
  */
 
+<<<<<<< HEAD
+<<<<<<< HEAD:UserManagement/src/main/java/in/gov/abdm/eua/userManagement/dto/phr/login/LoginViaPhrRequest.java
 package in.gov.abdm.eua.userManagement.dto.phr.login;
 
 import in.gov.abdm.eua.userManagement.dto.phr.Requester;
+=======
+package in.gov.abdm.eua.service.dto.phr.login;
+
+import in.gov.abdm.eua.service.dto.phr.Requester;
+>>>>>>> 9dbb9f3cbb1548b28a5c1ef4dea8ca3f1144235a:EUAclient/src/main/java/in/gov/abdm/eua/service/dto/phr/login/LoginViaPhrRequest.java
+=======
+package in.gov.abdm.eua.userManagement.dto.phr.login;
+
+import in.gov.abdm.eua.userManagement.dto.phr.Requester;
+>>>>>>> 9dbb9f3cbb1548b28a5c1ef4dea8ca3f1144235a
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

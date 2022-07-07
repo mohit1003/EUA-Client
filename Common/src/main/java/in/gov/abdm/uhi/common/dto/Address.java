@@ -23,6 +23,7 @@ public class Address {
 	private String city;
 	private String state;
 	private String country;
+
 	@JsonProperty(value = "area_code")
 	private String areaCode;
 }

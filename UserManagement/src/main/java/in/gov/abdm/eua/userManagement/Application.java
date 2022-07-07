@@ -5,6 +5,10 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+<<<<<<< HEAD
+=======
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+>>>>>>> 9dbb9f3cbb1548b28a5c1ef4dea8ca3f1144235a
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 @SpringBootApplication

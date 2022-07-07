@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.Data;
 
 @Data
@@ -20,5 +21,4 @@ public class Agent {
 	private Map<String, String> tags;
 	private String phone;
 	private String email;
-
 }

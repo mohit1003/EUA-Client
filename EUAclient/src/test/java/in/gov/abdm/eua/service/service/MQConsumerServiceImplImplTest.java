@@ -249,8 +249,8 @@ public class MQConsumerServiceImplImplTest {
 
     @Test
     void euaToGatewayConsumer() throws IOException {
-        mqConsumerServiceImpl.euaToGatewayConsumer(new MqMessageTO(), null,1L);
-        Mockito.verify(mqConsumerServiceImpl).euaToGatewayConsumer(any(), any(),anyLong());
+        mqConsumerServiceImpl.euaToGatewayConsumer(new MqMessageTO());
+        Mockito.verify(mqConsumerServiceImpl).euaToGatewayConsumer(any());
     }
 
     @Test
