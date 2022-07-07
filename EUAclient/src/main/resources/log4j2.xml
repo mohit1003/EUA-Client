@@ -51,7 +51,6 @@
 
 	<Loggers>
 		<Root level="INFO">
-			<AppenderRef ref="console" />
 			<AppenderRef ref="infoLog" />
 			<AppenderRef ref="errorLog" />
 		</Root>
