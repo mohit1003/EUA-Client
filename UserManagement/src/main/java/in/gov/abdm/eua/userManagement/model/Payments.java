@@ -33,7 +33,7 @@ public class Payments {
     private String UserAbhaId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName ="user_id")
+    @JoinColumn(name = "user_id", referencedColumnName ="id")
     private User user;
 
 }

@@ -20,11 +20,15 @@ import lombok.Data;
 @Data
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "id")
+    private String id;
+
+    @Column(name = "fullName")
+    private String fullName;
     @Column(name = "first_name", nullable = false)
     private String firstName;
+    @Column(name = "has_transsaction_pin", nullable = false)
+    private Boolean hasTransactionPin;
     @Column(name = "middle_name")
     private String middleName;
     @Column(name = "last_name")
@@ -40,20 +44,26 @@ public class User {
     @Column(name = "mobile")
     private String mobile;
 
-    @Column(name = "day_of_birth")
-    private String dayOfBirth;
+    @Column(name = "address")
+    private String address;
+
+    @Column(name ="gender")
+    private String gender;
+
+    @Column(name = "date_of_birth")
+    private Integer dateOfBirth;
 
     @Column(name = "month_of_birth")
-    private String monthOfBirth;
+    private Integer monthOfBirth;
 
     @Column(name = "year_of_birth")
-    private String yearOfBirth;
+    private Integer yearOfBirth;
 
-    @Column(name = "profile_photo", length = 20000)
+    @Column(name = "profile_photo", length = 50000)
     private String profilePhoto;
 
     @Column(name = "aadhar_verified")
-    private String aadhaarVerified;
+    private Boolean aadhaarVerified;
 
     @Column(name = "kyc_photo", length = 20000)
     private String kycPhoto;
@@ -72,6 +82,31 @@ public class User {
 
     @Column(name = "verification_status")
     private String verificationStatus;
+
+    @Column(name = "state_name")
+    private String stateName;
+
+    @Column(name = "state_code")
+    private String stateCode;
+
+    @Column(name = "district_name")
+    private String districtName;
+
+    @Column(name = "district_code")
+    private String districtCode;
+
+    @Column(name = "kycDocument_type")
+    private String kycDocumentType;
+
+    @Column(name = "kyc_status")
+    private String kycStatus;
+
+    @Column(name = "country_name")
+    private String countryName;
+
+    @Column(name = "pincode")
+    private String pincode;
+
 
 
     @ElementCollection

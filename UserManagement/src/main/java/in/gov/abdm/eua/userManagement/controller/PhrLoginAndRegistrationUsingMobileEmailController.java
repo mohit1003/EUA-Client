@@ -29,7 +29,7 @@ import java.util.Set;
 
 @Tag(name = "Login and Registration using mobile and email", description = "These APIs are intended to be used for user registration and login to EUA using mobile and email. These APIs are using PHR's APIs internally")
 @RestController
-@RequestMapping("api/v1/user/")
+@RequestMapping("api/v1/user")
 public class PhrLoginAndRegistrationUsingMobileEmailController {
     private static final Logger LOGGER = LoggerFactory.getLogger(PhrLoginAndRegistrationUsingMobileEmailController.class);
     private final WebClient webClient;
@@ -818,7 +818,7 @@ public class PhrLoginAndRegistrationUsingMobileEmailController {
             errorResponse.getError().setCode("400");
             return errorResponse;
         }
-        if (null == otpDTO.getDateOfBirth().getDate() || null == otpDTO.getDateOfBirth().getMonth() || null == otpDTO.getDateOfBirth().getYear()) {
+        if (null == otpDTO.getDateOfBirth().getDateOfBirth() || null == otpDTO.getDateOfBirth().getMonthOfBirth() || null == otpDTO.getDateOfBirth().getYearOfBirth()) {
             TransactionResponse errorResponse = new TransactionResponse();
             errorResponse.getError().setErrorString("Invalid Date of birth (Date/Month/Year). Null provided");
             errorResponse.getError().setCode("400");

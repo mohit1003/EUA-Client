@@ -72,7 +72,7 @@ public class Orders {
     private String slotId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id",  referencedColumnName ="user_id")
+    @JoinColumn(name = "user_id",  referencedColumnName ="id")
     private User user;
     @Column(name = "healthIdNumber")
     private String abhaId;

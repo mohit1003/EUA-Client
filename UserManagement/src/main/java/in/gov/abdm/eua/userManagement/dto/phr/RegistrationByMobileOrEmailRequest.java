@@ -1,17 +1,20 @@
 package in.gov.abdm.eua.userManagement.dto.phr;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import in.gov.abdm.eua.userManagement.dto.dhp.ServiceResponseDTO;
+import lombok.*;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class RegistrationByMobileOrEmailRequest extends UserData {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class RegistrationByMobileOrEmailRequest extends ServiceResponseDTO {
     private Object sessionId;
+    private String fullName;
     private NamePhrRegistration name;
     private DateOfBirthRegistrationPhr dateOfBirth;
     private String gender;
@@ -19,9 +22,24 @@ public class RegistrationByMobileOrEmailRequest extends UserData {
     private String districtCode;
     private String email;
     private String mobile;
-    private String countryCode;
+    @JsonProperty("pincode")
     private String pinCode;
     private String address;
+    @JsonProperty("id")
+    private String id;
+    private Boolean hasTransactionPin;
+    private String healthId;
+    private String stateName;
+    private String districtName;
+    private Boolean aadhaarVerified;
+    private String profilePhoto;
+    private String kycDocumentType;
+    private String kycStatus;
+    private Boolean mobileVerified;
+    private Boolean emailVerified;
+    private String countryName;
+
+
 
 
     @Data
@@ -39,8 +57,11 @@ public class RegistrationByMobileOrEmailRequest extends UserData {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class DateOfBirthRegistrationPhr {
-        private String date;
-        private String month;
-        private String year;
+        @JsonProperty("date")
+        private Integer dateOfBirth;
+        @JsonProperty("month")
+        private Integer monthOfBirth;
+        @JsonProperty("year")
+        private Integer yearOfBirth;
     }
 }

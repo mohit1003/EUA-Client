@@ -2,6 +2,7 @@ package in.gov.abdm.eua.userManagement.dto.phr;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import in.gov.abdm.eua.userManagement.dto.dhp.ServiceResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class UserDTO {
+public class UserDTO extends ServiceResponseDTO {
     private Long userId;
     private String firstName;
     private String middleName;

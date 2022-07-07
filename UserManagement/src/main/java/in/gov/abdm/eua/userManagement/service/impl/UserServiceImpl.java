@@ -15,6 +15,7 @@ import in.gov.abdm.eua.userManagement.repository.UserRepository;
 import in.gov.abdm.eua.userManagement.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
+import org.modelmapper.convention.MatchingStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,18 +40,19 @@ public class UserServiceImpl implements UserService {
     @Value("${abha.getUserProfile.url}")
     private String getUserProfileUrl;
 
+    TypeMap<HidResponse, UserDTO> mapUserDtoToModel;
+
+
     private UserRepository userRepo;
     private AddressRepository addressRepo;
-    private ModelMapper modelMapper;
     private WebClient webClient;
     private UserAbhaAddressRepository abhaAddressRepo;
     private UserRefreshTokenRepository refreshTokenRepo;
     private UserDTO userDTO;
 
-    public UserServiceImpl(UserRepository userRepo, AddressRepository addressRepo, ModelMapper modelMapper, WebClient webClient, UserAbhaAddressRepository abhaAddressRepo, UserRefreshTokenRepository refreshTokenRepo) {
+    public UserServiceImpl(UserRepository userRepo, AddressRepository addressRepo, WebClient webClient, UserAbhaAddressRepository abhaAddressRepo, UserRefreshTokenRepository refreshTokenRepo) {
         this.userRepo = userRepo;
         this.addressRepo = addressRepo;
-        this.modelMapper = modelMapper;
         this.webClient = webClient;
         this.abhaAddressRepo = abhaAddressRepo;
         this.refreshTokenRepo = refreshTokenRepo;
@@ -127,6 +129,7 @@ public class UserServiceImpl implements UserService {
     //    @Async TODO: Make this async
     @Override
     public void saveUserToDb(UserDTO userDTO) {
+        ModelMapper modelMapper = new ModelMapper();
         Address address = modelMapper.map(userDTO, Address.class);
 
         Set<in.gov.abdm.eua.userManagement.model.UserAbhaAddress> abhaAddressSet = new HashSet<>();
@@ -145,15 +148,26 @@ public class UserServiceImpl implements UserService {
         }
         address.getUser().setUser_abhaAddresses(abhaAddressSet);
         addressRepo.save(address);
+
+        modelMapper = null;
+    }
+
+    public void saveUser(RegistrationByMobileOrEmailRequest userDTO) {
+        userRepo.save(getUserModelFromUserDTO(userDTO));
+
+    }
+
+    public RegistrationByMobileOrEmailRequest getUserByAbhaAddress(String abhaAddress) {
+        return getUserDtoFromUserModel(userRepo.findById(abhaAddress));
     }
 
 
     @Override
     public void saveUserRefreshToken(String refreshToken, @Valid LoginPostVerificationRequest otpDTO) {
         List<in.gov.abdm.eua.userManagement.model.UserAbhaAddress> abhaAddressList = abhaAddressRepo.findByPhrAddress(otpDTO.getPatientId().toString());
-        Long userId = null;
+        String userId = null;
         if (!abhaAddressList.isEmpty()) {
-            userId = abhaAddressList.get(0).getUser().getUserId();
+            userId = abhaAddressList.get(0).getUser().getId();
         } else {
             LOGGER.error("No abha address found");
             throw new PhrException500("No abha address found");
@@ -214,8 +228,9 @@ public class UserServiceImpl implements UserService {
         LOGGER.info("Mapping user data from /registration/hid/confirm-init HidResponse to userDto");
 
         UserDTO userDTO;
+        ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
-        TypeMap<HidResponse, UserDTO> mapperMobileEmail = this.modelMapper.createTypeMap(HidResponse.class, UserDTO.class);
+        TypeMap<HidResponse, UserDTO> mapperMobileEmail = modelMapper.createTypeMap(HidResponse.class, UserDTO.class);
 
         mapperMobileEmail.addMapping(src -> src.getName().getFirstName(), UserDTO::setFirstName);
         mapperMobileEmail.addMapping(src -> src.getName().getMiddleName(), UserDTO::setMiddleName);
@@ -225,13 +240,67 @@ public class UserServiceImpl implements UserService {
         mapperMobileEmail.addMapping(src -> src.getDateOfBirth().getMonth(), UserDTO::setMonthOfBirth);
         mapperMobileEmail.addMapping(src -> src.getDateOfBirth().getYear(), UserDTO::setYearOfBirth);
 
-        userDTO = this.modelMapper.map(userData, UserDTO.class);
+        userDTO = modelMapper.map(userData, UserDTO.class);
+
+        modelMapper = null;
 
         LOGGER.info("Mapped userDto is " + userDTO);
 
         return userDTO;
 
     }
+
+    private User getUserModelFromUserDTO(RegistrationByMobileOrEmailRequest userData) {
+        LOGGER.info("Mapping user data from /registration/hid/confirm-init HidResponse to userDto");
+
+        User userDTO;
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setAmbiguityIgnored(true);
+        TypeMap<RegistrationByMobileOrEmailRequest, User> typeMapIfNotAlreadyPresent = modelMapper.createTypeMap(RegistrationByMobileOrEmailRequest.class, User.class);
+
+        typeMapIfNotAlreadyPresent.addMapping(src -> src.getName().getFirst(), User::setFirstName);
+        typeMapIfNotAlreadyPresent.addMapping(src -> src.getName().getMiddle(), User::setMiddleName);
+        typeMapIfNotAlreadyPresent.addMapping(src -> src.getName().getLast(), User::setLastName);
+
+        typeMapIfNotAlreadyPresent.addMapping(src -> src.getDateOfBirth().getDateOfBirth(), User::setDateOfBirth);
+        typeMapIfNotAlreadyPresent.addMapping(src -> src.getDateOfBirth().getMonthOfBirth(), User::setMonthOfBirth);
+        typeMapIfNotAlreadyPresent.addMapping(src -> src.getDateOfBirth().getYearOfBirth(), User::setYearOfBirth);
+
+        typeMapIfNotAlreadyPresent.addMapping(RegistrationByMobileOrEmailRequest::getId, User::setId);
+
+
+        userDTO = modelMapper.map(userData, User.class);
+
+        modelMapper = null;
+
+        LOGGER.info("Mapped userDto is " + userDTO);
+
+        return userDTO;
+
+    }
+
+    private RegistrationByMobileOrEmailRequest getUserDtoFromUserModel(User userData) {
+        LOGGER.info("Mapping user data from /registration/hid/confirm-init HidResponse to userDto");
+
+        RegistrationByMobileOrEmailRequest userDTO;
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setAmbiguityIgnored(true);
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
+
+
+        userDTO = modelMapper.map(userData, RegistrationByMobileOrEmailRequest.class);
+
+        userDTO.getDateOfBirth().setMonthOfBirth(userData.getMonthOfBirth());
+        userDTO.getDateOfBirth().setYearOfBirth(userData.getYearOfBirth());
+
+        LOGGER.info("Mapped userDto is " + userDTO);
+
+        modelMapper = null;
+
+        return userDTO;
+
+    }
+
 
 
 }
