@@ -26,6 +26,7 @@
 	<modules>
 		<module>Common</module>
 		<module>EUAclient</module>
+		<module>UserManagement</module>
 	</modules>
 
 </project>
