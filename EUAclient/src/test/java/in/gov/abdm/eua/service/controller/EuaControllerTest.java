@@ -214,7 +214,7 @@ public class EuaControllerTest {
         requestBody.setContext(null);
         MessageAck.getAck().setStatus("Context is Null");
         ResponseEntity<MessageAck> MessageAckResponseEntity = new ResponseEntity<>(MessageAck, HttpStatus.INTERNAL_SERVER_ERROR);
-        Assertions.assertThat(euaController.onSearch(requestBody)).isEqualTo(MessageAckResponseEntity);
+        Assertions.assertThat(euaController.onSearch(String.valueOf(requestBody))).isEqualTo(MessageAckResponseEntity);
 
     }
 
@@ -224,7 +224,7 @@ public class EuaControllerTest {
         requestBody.setMessage(null);
         MessageAck.getAck().setStatus("Message is Null");
         ResponseEntity<MessageAck> MessageAckResponseEntity = new ResponseEntity<>(MessageAck, HttpStatus.INTERNAL_SERVER_ERROR);
-        Assertions.assertThat(euaController.onSearch(requestBody)).isEqualTo(MessageAckResponseEntity);
+        Assertions.assertThat(euaController.onSearch(String.valueOf(requestBody))).isEqualTo(MessageAckResponseEntity);
 
     }
 
@@ -235,7 +235,7 @@ public class EuaControllerTest {
 
         MessageAck.getAck().setStatus("Mandatory fields on context are Null");
         ResponseEntity<MessageAck> MessageAckResponseEntity = new ResponseEntity<>(MessageAck, HttpStatus.INTERNAL_SERVER_ERROR);
-        Assertions.assertThat(euaController.onSearch(requestBody)).isEqualTo(MessageAckResponseEntity);
+        Assertions.assertThat(euaController.onSearch(String.valueOf(requestBody))).isEqualTo(MessageAckResponseEntity);
     }
 
     private void makeContextMandatoryFieldsNull() {
@@ -258,7 +258,7 @@ public class EuaControllerTest {
 //        requestBody.getMessage().getCatalog().getProviders().add(requestBody.getMessage().getCatalog().getProviders().get(0));
 //        MessageAck.getError().setMessage("Mandatory field person name in one of the result is null");
 //        ResponseEntity<MessageAck> MessageAckResponseEntity = new ResponseEntity<>(MessageAck, HttpStatus.INTERNAL_SERVER_ERROR);
-//        Assertions.assertThat(euaController.onSearch(requestBody)).isEqualTo(MessageAckResponseEntity);
+//        Assertions.assertThat(euaController.onSearch(String.valueOf(requestBody))).isEqualTo(MessageAckResponseEntity);
 //    }
 
     @Test
@@ -267,7 +267,7 @@ public class EuaControllerTest {
         requestBody.setContext(null);
         MessageAck.getAck().setStatus("Context is Null");
         ResponseEntity<MessageAck> MessageAckResponseEntity = new ResponseEntity<>(MessageAck, HttpStatus.INTERNAL_SERVER_ERROR);
-        Assertions.assertThat(euaController.search(requestBody)).isEqualTo(MessageAckResponseEntity);
+        Assertions.assertThat(euaController.search(String.valueOf(requestBody))).isEqualTo(MessageAckResponseEntity);
     }
 
     @Test
@@ -276,7 +276,7 @@ public class EuaControllerTest {
         requestBody.setMessage(null);
         MessageAck.getAck().setStatus("Message is Null");
         ResponseEntity<MessageAck> MessageAckResponseEntity = new ResponseEntity<>(MessageAck, HttpStatus.INTERNAL_SERVER_ERROR);
-        Assertions.assertThat(euaController.search(requestBody)).isEqualTo(MessageAckResponseEntity);
+        Assertions.assertThat(euaController.search(String.valueOf(requestBody))).isEqualTo(MessageAckResponseEntity);
     }
 
     @Test
@@ -286,7 +286,7 @@ public class EuaControllerTest {
 
         MessageAck.getAck().setStatus("Mandatory fields on context are Null");
         ResponseEntity<MessageAck> MessageAckResponseEntity = new ResponseEntity<>(MessageAck, HttpStatus.INTERNAL_SERVER_ERROR);
-        Assertions.assertThat(euaController.search(requestBody)).isEqualTo(MessageAckResponseEntity);
+        Assertions.assertThat(euaController.search(String.valueOf(requestBody))).isEqualTo(MessageAckResponseEntity);
     }
 
 
