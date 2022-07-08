@@ -119,35 +119,6 @@ public class EuaController {
 	}
 
 
-
-	@PostMapping("/on_select")
-	public ResponseEntity<AckResponseDTO> onSelect(@RequestBody String onSelectRequestString) throws JsonProcessingException {
-		LOGGER.info("Inside on_select API ");
-		try {
-			EuaRequestBody onSelectRequest = getEuaRequestBody(onSelectRequestString);
-			ResponseEntity<AckResponseDTO> onSelectAck = getResponseEntityForErrorCases(onSelectRequest, objectMapper);
-			if (onSelectAck != null) return onSelectAck;
-
-			String requestMessageId = onSelectRequest.getContext().getMessageId();
-
-			LOGGER.info("Request Body :" + onSelectRequestString);
-			String consumerId = onSelectRequest.getContext().getConsumerId();
-			String action = onSelectRequest.getContext().getAction();
-			MqMessageTO message = euaService.extractMessage(onSelectRequestString, consumerId, requestMessageId, action);
-			euaService.pushToMqGatewayTOEua(message, requestMessageId);
-
-			return euaService.getOnAckResponseResponseEntity(objectMapper, onSelectRequestString, "on_select", requestMessageId);
-
-		} catch (Exception e) {
-
-			LOGGER.error(e.toString());
-
-			return getNackResponseResponseEntityWithoutMono();
-
-		}
-
-	}
-
 	@PostMapping("/on_init")
 	@Operation(
 			summary = "on-init",
@@ -368,44 +339,7 @@ public class EuaController {
 		return searchAck;
 	}
 
-
-	@PostMapping("/select")
-	public ResponseEntity<AckResponseDTO> select(@RequestBody String selectRequestString) throws JsonProcessingException {
-
-		LOGGER.info("Inside select API ");
-
-		String requestMessageId = null;
-		ResponseEntity<AckResponseDTO> searchAck;
-		try {
-			EuaRequestBody selectRequest = getEuaRequestBody(selectRequestString);
-			searchAck = getResponseEntityForErrorCases(selectRequest, objectMapper);
-			if (searchAck != null)
-				return searchAck;
-			else
-				searchAck = ResponseEntity.status(HttpStatus.OK).build();
-
-
-			selectRequest.getContext().setConsumerUri(abdmEUAURl);
-			String providerURI = selectRequest.getContext().getProviderUri();
-			requestMessageId = selectRequest.getContext().getMessageId();
-			String clientId = selectRequest.getContext().getConsumerId();
-			String action = selectRequest.getContext().getAction();
-			LOGGER.info("Provider URI :" + providerURI);
-
-			LOGGER.info("Request Body :" + selectRequestString);
-			euaService.pushToMq(selectRequestString, clientId, action, requestMessageId);
-			LOGGER.info("Request Body enqueued successfully:" + selectRequestString);
-
-
-		} catch (Exception e) {
-			LOGGER.error(e.toString());
-			mqService.prepareAndSendNackResponse(ConstantsUtils.NACK_RESPONSE, requestMessageId);
-			return getNackResponseResponseEntityWithoutMono();
-		}
-		return searchAck;
-
-	}
-
+	
 
 	@PostMapping("/init")
 	@Operation(
