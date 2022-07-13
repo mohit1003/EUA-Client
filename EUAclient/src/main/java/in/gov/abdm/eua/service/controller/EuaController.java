@@ -290,7 +290,7 @@ public class EuaController {
 
 	}
 
-	@PostMapping(ConstantsUtils.SEARCH_ENDPOINT)
+		@PostMapping(ConstantsUtils.SEARCH_ENDPOINT)
 	@Operation(
 			summary = "search",
 			description = "This API call would be used in two phases. <br> " +
@@ -339,7 +339,7 @@ public class EuaController {
 		return searchAck;
 	}
 
-	
+
 
 	@PostMapping("/init")
 	@Operation(
